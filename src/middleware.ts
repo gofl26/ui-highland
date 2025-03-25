@@ -18,16 +18,23 @@ export default auth(async (req) => {
   } else {
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
     if (req.auth) {
-      const result = await fetch(`${baseUrl}/api/auth/tokenVerify`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${req.auth.accessToken}`,
-        },
-      })
-      const { error } = await result.json()
-      if (error && !isMatch(req.nextUrl.pathname, matchersForSignIn)) {
-        const newUrl = new URL('/signin', req.nextUrl.origin)
-        return Response.redirect(newUrl)
+      try {
+        const result = await fetch(`${baseUrl}/api/auth/tokenVerify`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${req.auth.accessToken}`,
+          },
+        })
+        const { error } = await result.json()
+        if (error && !isMatch(req.nextUrl.pathname, matchersForSignIn)) {
+          const newUrl = new URL('/signin', req.nextUrl.origin)
+          return Response.redirect(newUrl)
+        }
+      } catch (error) {
+        return NextResponse.json(
+          { error: 'Server error', details: error instanceof Error ? error.message : null },
+          { status: 500 },
+        )
       }
     }
   }
