@@ -1,5 +1,4 @@
 import { auth } from '@/auth'
-import dynamic from 'next/dynamic'
 import { serverFetch } from '@/lib/serverFetch'
 import SessionButtons from '@/components/commons/button/sessionButton'
 import CommunityButtons from '@/components/commons/button/communityButton'
