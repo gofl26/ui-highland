@@ -2,22 +2,26 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { useAtomValue } from 'jotai'
-import { atomMenuInfo, atomSiteInfo } from '@/stores/atoms'
+import type { siteResponse } from '@/types/sites'
+import type { menuResponse } from '@/types/menu'
 
-export default function MenuButton() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL
+interface Props {
+  apiUrl: string
+  siteInfo: siteResponse
+  menuInfo: menuResponse[]
+}
+
+export default function MenuButton(props: Props) {
+  const { apiUrl, siteInfo, menuInfo } = props
   const router = useRouter()
-  const menuInfo = useAtomValue(atomMenuInfo)
-  const siteInfo = useAtomValue(atomSiteInfo)
 
   const [logo, setLogo] = useState('')
   useEffect(() => {
     const splitLogoFile = siteInfo.sitesFile.split('/')
     if (splitLogoFile.length !== 2) return
-    const image = `${API_URL}/api/files/getFile?fileName=${splitLogoFile[1]}`
+    const image = `${apiUrl}/api/files/getFile?fileName=${splitLogoFile[1]}`
     setLogo(image)
-  }, [siteInfo, API_URL])
+  }, [apiUrl, siteInfo])
   return (
     <div className="flex gap-4">
       {logo && (

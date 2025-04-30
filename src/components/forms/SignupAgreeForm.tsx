@@ -1,17 +1,17 @@
+'use client'
+import { useState } from 'react'
 import { MdDone } from 'react-icons/md'
 import PersonalInfoDocumentForm from '@/components/documents/PersonalInfo'
 import ServiceInfoDocumentForm from '@/components/documents/ServiceInfo'
 
 interface PropsType {
-  personalAgree: boolean
-  setPersonalAgree: React.Dispatch<React.SetStateAction<boolean>>
-  serviceAgree: boolean
-  setServiceAgree: React.Dispatch<React.SetStateAction<boolean>>
   setSignupAgree: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export default function SignupAgreeForm(props: PropsType) {
-  const { personalAgree, serviceAgree, setPersonalAgree, setServiceAgree, setSignupAgree } = props
+  const { setSignupAgree } = props
+  const [personalAgree, setPersonalAgree] = useState(false)
+  const [serviceAgree, setServiceAgree] = useState(false)
   return (
     <>
       <div className="flex w-1/2 h-48">
