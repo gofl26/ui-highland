@@ -29,7 +29,7 @@ export default function SideBarMenuButton(props: Props) {
       <div className="w-full">
         <button
           onClick={() => setProductOpen((prev) => !prev)}
-          className="w-full px-4 py-4 flex items-center justify-between hover:bg-bgHoverSideBar"
+          className="w-full px-4 py-4 flex items-center rounded-lg justify-between hover:bg-bgHoverSideBar"
         >
           <span>상품 관리</span>
           {isProductOpen ? (
@@ -46,7 +46,7 @@ export default function SideBarMenuButton(props: Props) {
             {categories?.map(({ categoryName, categoryUrl }, index) => (
               <button
                 key={index}
-                className={`flex w-full px-4 py-2 hover:bg-bgHoverSideBar ${selectedMenu === categoryUrl ? 'bg-bgHoverSideBar' : ''}`}
+                className={`flex w-full px-4 py-2 rounded-lg hover:bg-bgHoverSideBar ${selectedMenu === categoryUrl ? 'bg-bgHoverSideBar' : ''}`}
                 onClick={() => router.push(`/manage/products/${categoryUrl}`)}
               >
                 - {categoryName}
@@ -58,7 +58,10 @@ export default function SideBarMenuButton(props: Props) {
     )
   }
   return (
-    <button className="flex px-4 py-4 hover:bg-bgHoverSideBar" onClick={() => router.push(path)}>
+    <button
+      className={`flex px-4 py-4 rounded-lg hover:bg-bgHoverSideBar ${selectedMenu === path ? 'bg-bgHoverSideBar' : ''}`}
+      onClick={() => router.push(`/manage${path}`)}
+    >
       {name}
     </button>
   )

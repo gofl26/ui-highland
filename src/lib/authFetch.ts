@@ -1,6 +1,9 @@
 import { auth } from '@/auth'
 
-export async function serverFetch<T = any>(url: string, options: RequestInit = {}): Promise<T> {
+export async function authFetch<T = any>(
+  url: string,
+  options: RequestInit = {},
+): Promise<Response> {
   const token = await auth()
 
   if (!token) {
@@ -8,8 +11,7 @@ export async function serverFetch<T = any>(url: string, options: RequestInit = {
   }
 
   const headers = new Headers(options.headers || {})
-  headers.set('Authorization', `Bearer ${token}`)
-  headers.set('Content-Type', 'application/json')
+  headers.set('Authorization', `Bearer ${token.accessToken}`)
 
   const res = await fetch(url, {
     ...options,
@@ -20,5 +22,5 @@ export async function serverFetch<T = any>(url: string, options: RequestInit = {
     throw new Error(`Fetch error: ${res.status} ${res.statusText}`)
   }
 
-  return res.json()
+  return res
 }

@@ -1,5 +1,6 @@
 import Image from 'next/image'
-import { getUserInfo, getCategories } from '@/serverActions/handler'
+import { getUserInfo } from '@/serverActions/handler'
+import { getCategory } from '@/serverActions/categories'
 import { sideBarMenu } from '@/stores/sideBarMenu'
 import SideBarMenuButton from '@/components/commons/button/sideBarMenuButton'
 import ErrorToast from '@/components/commons/toast/ErrorToast'
@@ -12,12 +13,10 @@ export default async function ManageSideBar() {
   let errorMessage = []
   let categories: categoryResponse[] = []
   try {
-    const rows = await getCategories()
+    const rows = await getCategory()
     if (!rows) {
       errorMessage.push('카테고리 정보를 불러오지 못했습니다.')
-      return
-    }
-    categories = rows
+    } else categories = rows
   } catch (error) {
     errorMessage.push('카테고리 정보를 불러오지 못했습니다.')
     console.error('🔥 fetch error:', error)
@@ -26,7 +25,14 @@ export default async function ManageSideBar() {
     <div className="flex flex-col w-64 shrink-0 gap-8 p-4 bg-bgSideBar overflow-y-auto text-textDefault">
       {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
       <div className="flex w-full py-4 gap-4 justify-center border-b border-borderSideBarDefault">
-        <Image src="/assets/images/common/logo.svg" alt="logo" width="32" height="32" />
+        <Image
+          src="/assets/images/common/logo.svg"
+          alt="logo"
+          width="0"
+          height="0"
+          priority
+          style={{ width: '32px', height: 'auto' }}
+        />
         <div className="flex flex-col">
           <p className="font-medium">{userInfo.user_name}</p>
           <p className="text-xs font-normal">{userInfo.email}</p>

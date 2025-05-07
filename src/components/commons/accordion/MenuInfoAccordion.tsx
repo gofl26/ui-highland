@@ -1,13 +1,27 @@
 'use client'
 
+import { useState } from 'react'
+import { GripVertical } from 'lucide-react'
+import { deleteMenu, updateMenu, createMenu } from '@/serverActions/menu'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
+import ErrorToast from '@/components/commons/toast/ErrorToast'
+import SuccessToast from '@/components/commons/toast/SuccessToast'
+import { menuResponse } from '@/types/menu'
+interface Props {
+  menuInfo: menuResponse[]
+}
 
-export default function MenuInfoAccordion() {
-  const [menuInfo, setMenuInfo] = useState([])
+export default function MenuInfoAccordion(props: Props) {
+  const { menuInfo } = props
+  const [menu, setMenu] = useState<menuResponse[]>(menuInfo)
+  const [isSorting, setIsSorting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string[]>([])
+  const [successMessage, setSuccessMessage] = useState<string[]>([])
+
   const handleDragEnd = (result: any) => {
     if (!result.destination) return
 
-    const newMenus = Array.from(menuInfo)
+    const newMenus = Array.from(menu)
     const [removed] = newMenus.splice(result.source.index, 1)
     newMenus.splice(result.destination.index, 0, removed)
 
@@ -16,10 +30,10 @@ export default function MenuInfoAccordion() {
       menuOrder: idx,
     }))
 
-    setMenuInfo(reorderedMenus)
+    setMenu(reorderedMenus)
   }
   const handleAddMenuRow = () => {
-    setMenuInfo((prev) => [
+    setMenu((prev) => [
       ...prev,
       {
         id: `new_${Date.now().toString()}`,
@@ -32,68 +46,51 @@ export default function MenuInfoAccordion() {
   }
   const handleDeleteRow = async (menuOrder: number) => {
     try {
-      if (menuInfo[menuOrder].id.includes('new_')) {
-        setMenuInfo((prev) => prev.filter((item) => item.menuOrder !== menuOrder))
+      if (menu[menuOrder].id.includes('new_')) {
+        setMenu((prev) => prev.filter((item) => item.menuOrder !== menuOrder))
       } else {
-        const result = await fetch(`${API_URL}/api/menu/delete`, {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ id: menuInfo[menuOrder].id }),
-        })
-        if (result.ok) {
-          setMenuInfo((prev) => prev.filter((item) => item.menuOrder !== menuOrder))
+        const result = await deleteMenu(menu[menuOrder].id)
+        if (result) {
+          setMenu((prev) => prev.filter((item) => item.menuOrder !== menuOrder))
         }
       }
     } catch (error) {
-      alert(error)
+      setErrorMessage(['삭제 실패'])
     }
   }
   const handleClickSaveMenu = async () => {
     try {
       const idArray: string[] = []
-      for (let index = 0; index < menuInfo.length; index++) {
-        const element = menuInfo[index]
-        const body = element.id.includes('new_')
-          ? {
-              menuName: element.menuName,
-              menuUrl: element.menuUrl,
-              active: element.active,
-              menuOrder: element.menuOrder,
-            }
-          : {
-              id: element.id,
-              menuName: element.menuName,
-              menuUrl: element.menuUrl,
-              active: element.active,
-              menuOrder: element.menuOrder,
-            }
-        const url = element.id.includes('new_')
-          ? `${API_URL}/api/menu/create`
-          : `${API_URL}/api/menu/update`
-        const method = element.id.includes('new_') ? 'POST' : 'PUT'
-        const result = await fetch(url, {
-          method,
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body),
-        })
-        const data = await result.json()
-        if (element.id.includes('new_') && data.rows) idArray.push(data.rows[0].id)
-        else idArray.push(element.id)
+      for (let index = 0; index < menu.length; index++) {
+        const element = menu[index]
+
+        if (element.id.includes('new_')) {
+          const result = await createMenu({
+            menuName: element.menuName,
+            menuUrl: element.menuUrl,
+            active: element.active,
+            menuOrder: element.menuOrder,
+          })
+          if (result) idArray.push(result[0].id)
+        } else {
+          await updateMenu({
+            id: element.id,
+            menuName: element.menuName,
+            menuUrl: element.menuUrl,
+            active: element.active,
+            menuOrder: element.menuOrder,
+          })
+          idArray.push(element.id)
+        }
       }
-      const newMenuInfo = menuInfo.reduce<menuResponse[]>((acc, { id, ...etc }, index) => {
+      const newMenuInfo = menu.reduce<menuResponse[]>((acc, { id, ...etc }, index) => {
         acc.push({ id: idArray[index], ...etc })
         return acc
       }, [])
-      setMenuInfo(newMenuInfo)
-      alert('저장성공')
+      setMenu(newMenuInfo)
+      setSuccessMessage(['저장 성공'])
     } catch (error) {
-      alert(error)
+      setErrorMessage(['저장 실패'])
     }
   }
   return (
@@ -106,10 +103,10 @@ export default function MenuInfoAccordion() {
           <Droppable droppableId="menu-list" isDropDisabled={!isSorting}>
             {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-2">
-                {menuInfo.map((menu, index) => (
+                {menu.map((item, index) => (
                   <Draggable
-                    key={menu.id}
-                    draggableId={menu.id}
+                    key={item.id}
+                    draggableId={item.id}
                     index={index}
                     isDragDisabled={!isSorting}
                   >
@@ -133,21 +130,21 @@ export default function MenuInfoAccordion() {
 
                         <input
                           type="text"
-                          value={menu.menuName}
+                          value={item.menuName}
                           onChange={(e) => {
-                            const newMenus = [...menuInfo]
+                            const newMenus = [...menu]
                             newMenus[index].menuName = e.target.value
-                            setMenuInfo(newMenus)
+                            setMenu(newMenus)
                           }}
                           className="focus:outline-none flex-1 border rounded p-2 text-sm"
                           placeholder="메뉴 이름"
                         />
                         <select
-                          value={menu.active ? '활성화' : '비활성화'}
+                          value={item.active ? '활성화' : '비활성화'}
                           onChange={(e) => {
-                            const newMenus = [...menuInfo]
+                            const newMenus = [...menu]
                             newMenus[index].active = e.target.value === '활성화' ? true : false
-                            setMenuInfo(newMenus)
+                            setMenu(newMenus)
                           }}
                           className="border rounded p-2 text-sm"
                         >
@@ -156,17 +153,17 @@ export default function MenuInfoAccordion() {
                         </select>
                         <input
                           type="text"
-                          value={menu.menuUrl}
+                          value={item.menuUrl}
                           onChange={(e) => {
-                            const newMenus = [...menuInfo]
+                            const newMenus = [...menu]
                             newMenus[index].menuUrl = e.target.value
-                            setMenuInfo(newMenus)
+                            setMenu(newMenus)
                           }}
                           className="focus:outline-none flex-1 border rounded p-2 text-sm"
                           placeholder="메뉴 URL"
                         />
                         <button
-                          onClick={() => handleDeleteRow(menu.menuOrder)}
+                          onClick={() => handleDeleteRow(item.menuOrder)}
                           className="text-red-400 hover:text-red-600"
                         >
                           ➖
@@ -216,6 +213,8 @@ export default function MenuInfoAccordion() {
           </button>
         </div>
       </div>
+      {successMessage.length !== 0 && <SuccessToast message={successMessage} />}
+      {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
     </>
   )
 }

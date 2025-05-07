@@ -1,12 +1,13 @@
 'use client'
-import { useState, useRef } from 'react'
-import { ChevronDown, ChevronRight, GripVertical } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
-import { updateSite, createSite } from '@/serverActions/handler'
-import ErrorToast from '../toast/ErrorToast'
+import { updateSite, createSite } from '@/serverActions/site'
+import ErrorToast from '@/components/commons/toast/ErrorToast'
+import SuccessToast from '@/components/commons/toast/SuccessToast'
 
 interface Props {
-  siteInfo: { id?: string; siteName?: string; sitesFile?: File; preview?: string }
+  siteInfo: { id?: string; siteName?: string; sitesFile?: File }
 }
 
 export default function SiteInfoAccordion(props: Props) {
@@ -14,10 +15,11 @@ export default function SiteInfoAccordion(props: Props) {
   const [logoOpen, setLogoOpen] = useState(false)
   const [siteName, setSiteName] = useState<string>(siteInfo?.siteName || '')
   const [selectedFile, setSelectedFile] = useState<File | undefined>(siteInfo?.sitesFile)
-  const [preview, setPreview] = useState<string | null | undefined>(siteInfo?.preview)
+  const [preview, setPreview] = useState<string | null | undefined>()
   const [errorMessage, setErrorMessage] = useState<string[]>([])
+  const [successMessage, setSuccessMessage] = useState<string[]>([])
+
   const fileInputRef = useRef<HTMLInputElement | null>(null)
-  console.info('siteInfo', siteInfo)
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0]
@@ -46,18 +48,33 @@ export default function SiteInfoAccordion(props: Props) {
         formData.append('id', siteInfo.id)
         const result = await updateSite(formData)
         if (!result) setErrorMessage(['저장 실패'])
+        else setSuccessMessage(['수정 성공'])
       } else {
         const result = await createSite(formData)
         if (!result) setErrorMessage(['저장 실패'])
+        else setSuccessMessage(['생성 성공'])
       }
     } catch (error) {
       setErrorMessage(['저장 실패'])
     }
   }
+  useEffect(() => {
+    if (selectedFile && selectedFile.type.startsWith('image/')) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setPreview(reader.result) // 문자열만 상태에 저장
+        }
+      }
+      reader.readAsDataURL(selectedFile)
+    } else {
+      setPreview(null)
+    }
+  }, [selectedFile])
   return (
     <>
       <div
-        className="flex w-full justify-between mt-8 px-4 py-2 rounded-t-lg bg-bgHeader cursor-pointer"
+        className="flex w-full justify-between items-center mt-8 px-4 py-2 rounded-t-lg bg-bgHeader cursor-pointer"
         onClick={() => setLogoOpen((prev) => !prev)}
       >
         <p>사이트 정보</p>
@@ -107,14 +124,15 @@ export default function SiteInfoAccordion(props: Props) {
               <Image
                 src={preview}
                 alt="Preview"
-                width={100} // 이미지의 너비 설정
-                height={100} // 이미지의 높이 설정
-                objectFit="contain" // 이미지 비율 유지하면서 맞추기
+                width="0" // 이미지의 너비 설정
+                height="0" // 이미지의 높이 설정
+                style={{ width: '100px', height: 'auto', objectFit: 'contain' }}
               />
             </>
           )}
         </div>
       )}
+      {successMessage.length !== 0 && <SuccessToast message={successMessage} />}
       {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
     </>
   )

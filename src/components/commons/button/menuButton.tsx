@@ -28,9 +28,11 @@ export default function MenuButton(props: Props) {
         <Image
           src={logo}
           alt="logo"
-          width="200"
-          height="50"
+          width="0"
+          height="0"
           className="cursor-pointer"
+          style={{ width: '200px', height: 'auto' }}
+          priority
           onClick={() => router.push('/home')}
         />
       )}

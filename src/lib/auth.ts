@@ -35,9 +35,10 @@ export const authOptions: NextAuthConfig = {
           if (!result.ok) {
             throw new CustomError(responseData.error || 'Failed signup')
           }
-          const { accessToken } = responseData
+          const { accessToken, sessionId } = responseData
           return {
             accessToken,
+            sessionId,
           }
         } else {
           //로그인
@@ -55,9 +56,10 @@ export const authOptions: NextAuthConfig = {
           if (!result.ok) {
             throw new CustomError(responseData.error || 'Failed signin')
           }
-          const { accessToken } = responseData
+          const { accessToken, sessionId } = responseData
           return {
             accessToken,
+            sessionId,
           }
         }
       },
@@ -75,12 +77,14 @@ export const authOptions: NextAuthConfig = {
       //accessToken은 next-auth 라이브러리에 정의되지않은 타입이므로 /types/auth.d.ts에 별도 타입 추가
       if (user) {
         token.accessToken = user.accessToken
+        token.sessionId = user.sessionId
       }
       return token
     },
     session: async ({ session, token }) => {
       if (token?.accessToken) {
         session.accessToken = token.accessToken
+        session.sessionId = token.sessionId
       }
       return session
     },

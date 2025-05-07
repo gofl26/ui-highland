@@ -1,36 +1,38 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { match } from 'path-to-regexp'
+import { getUserInfo } from '@/serverActions/handler'
 
 function isMatch(pathname: string, urls: string[]) {
   return urls.some((url) => !!match(url)(pathname))
 }
-const matchersForSignIn = ['/signup', '/login']
+
+const requireAdminPath = '/manage'
+const requireLoginpath = ['/products/cart']
 
 export default auth(async (req) => {
-  const { pathname } = req.nextUrl
-  if (pathname.startsWith('/svg')) {
-    return NextResponse.next()
-  }
-  // if (!req?.auth?.accessToken && !isMatch(req.nextUrl.pathname, matchersForSignIn)) {
-  //   const newUrl = new URL('/login', req.nextUrl.origin)
-  //   return Response.redirect(newUrl)
-  // } else {
-  //   const baseUrl = process.env.API_URL || 'http://localhost:3000'
-  //   if (req.auth) {
-  //     const result = await fetch(`${baseUrl}/api/auth/tokenVerify`, {
-  //       method: 'GET',
-  //       headers: {
-  //         authorization: `Bearer ${req.auth.accessToken}`,
-  //       },
-  //     })
-  //     const { error } = await result.json()
-  //     if (error && !isMatch(req.nextUrl.pathname, matchersForSignIn)) {
-  //       const newUrl = new URL('/login', req.nextUrl.origin)
-  //       return Response.redirect(newUrl)
-  //     }
-  //   }
+  // const { pathname } = req.nextUrl
+  // if (pathname.startsWith('/svg')) {
+  //   return NextResponse.next()
   // }
+  if (req.nextUrl.pathname.includes(requireAdminPath)) {
+    const token = await auth()
+    if (token?.accessToken) {
+      const user = await getUserInfo()
+      if (user && user.role !== 'admin') {
+        const newUrl = new URL('/login', req.nextUrl.origin)
+        return Response.redirect(newUrl)
+      }
+    } else {
+      const newUrl = new URL('/login', req.nextUrl.origin)
+      return Response.redirect(newUrl)
+    }
+  }
+  if (isMatch(req.nextUrl.pathname, requireLoginpath)) {
+    //유저정보가 필요한 페이지
+    const newUrl = new URL('/login', req.nextUrl.origin)
+    return Response.redirect(newUrl)
+  }
 })
 
 ////

@@ -1,9 +1,7 @@
 'use server'
-import { serverFetch } from '@/lib/serverFetch'
+import { authFetch } from '@/lib/authFetch'
 import type { userVerify } from '@/types/users'
-import type { categoryResponse } from '@/types/category'
-import type { siteResponse } from '@/types/sites'
-import type { menuResponse } from '@/types/menu'
+import type { userResponse } from '@/types/users'
 
 const API_URL = process.env.API_URL || ''
 
@@ -24,8 +22,11 @@ export async function checkEmailDuplicate(email: string) {
 
 export async function getUserInfo(): Promise<userVerify | undefined> {
   try {
-    const result = await serverFetch(`${API_URL}/api/auth/tokenVerify`, {
+    const result = await authFetch(`${API_URL}/api/auth/tokenVerify`, {
       method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
     const { user }: { user: userVerify } = await result.json()
     return user
@@ -33,83 +34,105 @@ export async function getUserInfo(): Promise<userVerify | undefined> {
     return
   }
 }
-
-export async function getCategories(): Promise<categoryResponse[] | undefined> {
-  try {
-    const result = await fetch(`${API_URL}/api/auth/tokenVerify`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    const {
-      data: { rows = [] },
-    }: { data: { rows: categoryResponse[] } } = await result.json()
-    return rows
-  } catch (error) {
-    return
-  }
+interface updateBody {
+  password: string
 }
-
-export async function getSite(): Promise<siteResponse | undefined> {
+export async function updateUserInfo(body: updateBody) {
   try {
-    const result = await fetch(`${API_URL}/api/sites/get`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    const {
-      data: { rows = [] },
-    }: { data: { rows: siteResponse[] } } = await result.json()
-    if (rows.length > 0) return rows[0]
-    else return
-  } catch (error) {
-    return
-  }
-}
-
-export async function getMenu(): Promise<menuResponse[] | undefined> {
-  try {
-    const result = await fetch(`${API_URL}/api/menu/get`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    const {
-      data: { rows = [] },
-    }: { data: { rows: menuResponse[] } } = await result.json()
-    return rows
-  } catch (error) {
-    return
-  }
-}
-
-export async function updateSite(formData: FormData): Promise<boolean | undefined> {
-  try {
-    const result = await serverFetch(`${API_URL}/api/sites/update`, {
+    const result = await authFetch(`${API_URL}/api/users/update`, {
       method: 'PUT',
-      body: formData,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
     })
     if (result.ok) return true
-    else return false
+    return false
   } catch (error) {
     return
   }
 }
 
-export async function createSite(formData: FormData): Promise<siteResponse | undefined> {
+export async function getUsers(query: string = ''): Promise<userResponse[] | undefined> {
   try {
-    const result = await serverFetch(`${API_URL}/api/sites/create`, {
+    const result = await authFetch(`${API_URL}/api/users/getAll?${query}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const {
+      data: { rows },
+    }: { data: { rows: [] } } = await result.json()
+    return rows
+  } catch (error) {
+    return
+  }
+}
+
+interface updateUsers {
+  id?: string
+  userName?: string
+  role?: string
+  phoneNumber?: string
+  gender?: string
+}
+export async function updateUsers(body: updateUsers) {
+  try {
+    const result = await authFetch(`${API_URL}/api/users/updateAll`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    })
+    if (result.ok) return true
+    return false
+  } catch (error) {
+    return
+  }
+}
+
+export async function deleteUser(id: string) {
+  try {
+    const result = await authFetch(`${API_URL}/api/users/deleteAll`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id }),
+    })
+    if (result.ok) return true
+    return false
+  } catch (error) {
+    return
+  }
+}
+
+export async function getFile(file: string) {
+  try {
+    const fileNameArray = file.split('/')
+    const fileName = fileNameArray[fileNameArray.length - 1]
+    const result = await fetch(`${API_URL}/api/files/getFile?fileName=${fileName}`)
+    const blob = await result.blob()
+    return new File([blob], fileName, { type: blob.type })
+  } catch (error) {
+    return
+  }
+}
+
+export async function uploadFile(formData: FormData) {
+  try {
+    const result = await authFetch(`${API_URL}/api/files/upload`, {
       method: 'POST',
       body: formData,
     })
-    const {
-      data: { rows = [] },
-    }: { data: { rows: siteResponse[] } } = await result.json()
-    if (rows.length > 0) return rows[0]
-    else return
+    const { url } = await result.json()
+    const path = url
+    const fileNameArray = path.split('/')
+    const fileName = fileNameArray[fileNameArray.length - 1]
+    const a = `${API_URL}/api/files/getFile?fileName=${fileName}`
+    return a
   } catch (error) {
     return
   }
