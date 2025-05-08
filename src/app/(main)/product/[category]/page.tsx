@@ -5,6 +5,7 @@ import { getCategory } from '@/serverActions/categories'
 import { getProduct } from '@/serverActions/products'
 
 export default async function Product() {
+  const API_URL = process.env.API_URL || ''
   const category = await getCategory()
   const product = await getProduct()
   if (!category || !product) return null
@@ -22,7 +23,7 @@ export default async function Product() {
         </div>
         <p className="text-sm">껍질에도 영양성분이 가득한 애플 하이랜드 사과</p>
       </div>
-      <ProductList product={product} category={category} />
+      <ProductList product={product} category={category} apiUrl={API_URL} />
     </div>
   )
 }
