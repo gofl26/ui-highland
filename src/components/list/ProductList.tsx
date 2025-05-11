@@ -1,33 +1,77 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { CircleArrowUp } from 'lucide-react'
-import { usePathname } from 'next/navigation'
+import { CircleArrowUp, Plus, Minus } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
 import { productResponse } from '@/types/product'
 import { formatNumberWithCommas } from '@/utils/formatNumberWithCommas'
 import { categoryResponse } from '@/types/category'
 import BuyProductModal from '../modals/BuyProductModal'
+import { createCart } from '@/serverActions/cart'
+import SuccessToast from '../commons/toast/SuccessToast'
+import ErrorToast from '../commons/toast/ErrorToast'
 interface props {
   product: { rows: productResponse[]; total: number }
   category: categoryResponse[]
   apiUrl: string
+  token: boolean
 }
 
-export default function ProductList({ product, category, apiUrl }: props) {
+export default function ProductList({ product, category, apiUrl, token }: props) {
   const { rows, total } = product
   const [showTopMoveBtn, setShowTopMoveBtn] = useState(false)
   const [productList, setProductList] = useState<productResponse[]>([])
   const [openBuyProductModal, setOpenBuyProductModal] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<productResponse>()
-
+  const [quantity, setQuantity] = useState(1)
+  const [successMessage, setSuccessMessage] = useState<string[]>([])
+  const [errorMessage, setErrorMessage] = useState<string[]>([])
   const showTopMoveBtnRef = useRef(showTopMoveBtn)
   const pathname = usePathname()
-
+  const router = useRouter()
   const handleClickProductItem = async (productId: string) => {
     const product = productList.find(({ id }) => id === productId)
     if (!product) return
     setSelectedProduct(product)
+    setQuantity(1)
     setOpenBuyProductModal(true)
+  }
+  const handleClickCreateCart = async () => {
+    if (!selectedProduct) return
+    if (!token) {
+      router.push('/login')
+      return
+    }
+    const cartData = {
+      productId: selectedProduct.id,
+      cartQuantity: quantity,
+    }
+    const result = await createCart(cartData)
+    if (result) setSuccessMessage(['장바구니에 담았습니다.'])
+    else setErrorMessage(['장바구니 담기에 실패했습니다.'])
+  }
+  const handleClickBuyProduct = async () => {
+    if (!selectedProduct) return
+    if (!token) {
+      router.push('/login')
+      return
+    }
+    const cartData = {
+      productId: selectedProduct.id,
+      cartQuantity: quantity,
+    }
+    const result = await createCart(cartData)
+    if (result) {
+      setSuccessMessage(['장바구니에 담았습니다.'])
+      router.push('/users/cart')
+    } else setErrorMessage(['장바구니 담기에 실패했습니다.'])
+  }
+  const handleClickMinusBtn = () => {
+    if (quantity === 1) return
+    setQuantity((p) => p - 1)
+  }
+  const handleClickPlusBtn = () => {
+    setQuantity((p) => p + 1)
   }
   useEffect(() => {
     const findCategory = category.find(({ categoryUrl }) => pathname.includes(categoryUrl))
@@ -64,6 +108,8 @@ export default function ProductList({ product, category, apiUrl }: props) {
   }, [])
   return (
     <div className="flex-col w-full items-center">
+      {successMessage.length !== 0 && <SuccessToast message={successMessage} />}
+      {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
       {showTopMoveBtn === true && (
         <button
           className="fixed top-12 right-12"
@@ -131,11 +177,37 @@ export default function ProductList({ product, category, apiUrl }: props) {
               </div>
               <div className="flex w-full justify-between">
                 <p className="text-sm">수량</p>
-                <p className="text-sm"></p>
+                <div className="flex">
+                  <button
+                    className="flex w-10 border justify-center items-center"
+                    onClick={handleClickMinusBtn}
+                  >
+                    <Minus size="16" />
+                  </button>
+                  <div className="flex w-16 py-2 border-t border-b items-center justify-center">
+                    {quantity}
+                  </div>
+                  <button
+                    className="flex w-10 border justify-center items-center"
+                    onClick={handleClickPlusBtn}
+                  >
+                    <Plus size="16" />
+                  </button>
+                </div>
               </div>
               <div className="flex w-full justify-center gap-4">
-                <button className="w-1/2 py-2 border rounded-lg border-borderDefault">장바구니</button>
-                <button className="w-1/2 py-2 rounded-lg bg-bgPrimary text-textPrimary">바로 구매</button>
+                <button
+                  className="w-1/2 py-2 border rounded-lg border-borderDefault"
+                  onClick={handleClickCreateCart}
+                >
+                  장바구니
+                </button>
+                <button
+                  className="w-1/2 py-2 rounded-lg bg-bgPrimary text-textPrimary"
+                  onClick={handleClickBuyProduct}
+                >
+                  바로 구매
+                </button>
               </div>
             </div>
           </div>

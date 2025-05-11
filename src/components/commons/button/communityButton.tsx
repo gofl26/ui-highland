@@ -9,14 +9,14 @@ export default function CommunityButtons() {
     <div className="flex gap-2">
       <button
         onClick={() => {
-          router.push('/comunity')
+          router.push('/community/notice')
         }}
       >
         공지사항
       </button>
       <button
         onClick={() => {
-          router.push('/comunity')
+          router.push('/community/customer')
         }}
       >
         고객센터
