@@ -1,9 +1,12 @@
-import Image from 'next/image'
+import CustomerList from '@/components/list/CustomerList'
+import { getFaq } from '@/serverActions/faq'
 
 export default async function Customer() {
+  const faq = await getFaq()
+  if (!faq) return null
   return (
     <div className="flex flex-col w-full items-center text-textDefault overflow-auto">
-      <p className="text-lg font-semibold">공지사항</p>
+      <CustomerList faqInfo={faq} />
     </div>
   )
 }

@@ -78,9 +78,7 @@ export default function ProductList({ product, category, apiUrl, token }: props)
     const transProductList = rows.reduce<productResponse[]>(
       (acc, { categoryId, productsFile, ...etc }) => {
         if (categoryId === findCategory?.id) {
-          const splitFile = productsFile.split('/')
-          if (splitFile.length !== 2) return acc
-          const image = `${apiUrl}/api/files/getFile?fileName=${splitFile[1]}`
+          const image = `${apiUrl}/api/files/getFile?fileName=${productsFile}`
           acc.push({ categoryId, productsFile: image, ...etc })
         }
         return acc
@@ -133,7 +131,7 @@ export default function ProductList({ product, category, apiUrl, token }: props)
             onClick={() => handleClickProductItem(product.id)}
           >
             {/* 이미지 */}
-            <div className="relative w-full h-48">
+            <div className="relative w-full h-48 group">
               <Image
                 src={product.productsFile}
                 alt={product.productName}
@@ -142,6 +140,15 @@ export default function ProductList({ product, category, apiUrl, token }: props)
                 priority
                 sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw"
               />
+              {/* 어두운 오버레이 */}
+              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              {/* 퀵뷰 텍스트 */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="text-white px-4 py-2 border border-white rounded text-sm font-semibold shadow-md">
+                  퀵뷰
+                </span>
+              </div>
             </div>
             <div className="flex flex-col px-4 py-2 gap-2">
               <p className="text-xl">{product.productName}</p>
