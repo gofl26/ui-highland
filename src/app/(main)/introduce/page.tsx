@@ -148,7 +148,7 @@ export default async function Introduce() {
       </div>
       <div className="flex flex-col md:flex-row justify-center items-center w-full min-h-[700px] bg-[url('/assets/images/common/background01.svg')] bg-no-repeat bg-cover gap-5">
         <div className="w-4/5 md:w-2/5 h-60 flex flex-col items-center px-5 py-8">
-          <div className="flex w-full h-12 justify-center items-center border-borderPrimary border-t border-b">
+          <div className="flex w-full h-12 justify-center items-center border-borderLayout border-t border-b">
             <p className="text-lg">고객센터 안내</p>
           </div>
           <p className="text-2xl mt-8">010 - 3522 - 6848</p>
@@ -156,14 +156,14 @@ export default async function Introduce() {
           <p className="mt-2">주말 오전 9시 - 오후 6시</p>
         </div>
         <div className="w-4/5 md:w-2/5 h-60 flex flex-col items-center px-5 py-8">
-          <div className="flex w-full h-12 justify-center items-center border-borderPrimary border-t border-b">
+          <div className="flex w-full h-12 justify-center items-center border-borderLayout border-t border-b">
             <p className="text-lg">계좌</p>
           </div>
           <p className="text-2xl mt-8">농협 352-1748-2227-33</p>
           <p className="mt-4">박현수</p>
         </div>
         <div className="w-4/5 md:w-2/5 h-60 flex flex-col items-center px-5 py-8">
-          <div className="flex w-full h-12 justify-center items-center border-borderPrimary border-t border-b">
+          <div className="flex w-full h-12 justify-center items-center border-borderLayout border-t border-b">
             <p className="text-lg">주소</p>
           </div>
           <p className="mt-4">강원도 양구군 해안면</p>

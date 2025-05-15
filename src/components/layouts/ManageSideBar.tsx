@@ -22,7 +22,7 @@ export default async function ManageSideBar() {
     console.error('🔥 fetch error:', error)
   }
   return (
-    <div className="flex flex-col w-64 shrink-0 gap-8 p-4 bg-bgSideBar overflow-y-auto text-textDefault">
+    <div className="flex flex-col w-64 shrink-0 gap-8 p-4 bg-bgSideBar text-textDefault overflow-y-auto custom-scroll">
       {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
       <div className="flex w-full py-4 gap-4 justify-center border-b border-borderSideBarDefault">
         <Image
