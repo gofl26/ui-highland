@@ -2,8 +2,10 @@ import LoginForm from '@/components/forms/LoginForm'
 
 export default async function Login() {
   return (
-    <div className="flex flex-col w-full h-full justify-center items-center py-16 px-4 gap-4 text-textDefault">
-      <span className="text-4xl font-semibold">Login</span>
+    <div className="flex flex-col w-full items-center text-textDefault">
+      <div className="flex justify-center items-center w-full h-48">
+        <p className="text-4xl font-semibold">Login</p>
+      </div>
       <LoginForm />
     </div>
   )

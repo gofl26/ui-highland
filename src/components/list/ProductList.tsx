@@ -1,15 +1,14 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { CircleArrowUp, Plus, Minus } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
-import { productResponse } from '@/types/product'
+import { CircleArrowUp, Plus, Minus } from 'lucide-react'
+import { createCart } from '@/serverActions/cart'
+import BuyProductModal from '@/components/modals/BuyProductModal'
+import { useToast } from '@/components/commons/toast/ToastProvider'
 import { formatNumberWithCommas } from '@/utils/formatNumberWithCommas'
 import { categoryResponse } from '@/types/category'
-import BuyProductModal from '../modals/BuyProductModal'
-import { createCart } from '@/serverActions/cart'
-import SuccessToast from '../commons/toast/SuccessToast'
-import ErrorToast from '../commons/toast/ErrorToast'
+import { productResponse } from '@/types/product'
 interface props {
   product: { rows: productResponse[]; total: number }
   category: categoryResponse[]
@@ -24,11 +23,12 @@ export default function ProductList({ product, category, apiUrl, token }: props)
   const [openBuyProductModal, setOpenBuyProductModal] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<productResponse>()
   const [quantity, setQuantity] = useState(1)
-  const [successMessage, setSuccessMessage] = useState<string[]>([])
-  const [errorMessage, setErrorMessage] = useState<string[]>([])
+
   const showTopMoveBtnRef = useRef(showTopMoveBtn)
   const pathname = usePathname()
   const router = useRouter()
+  const { showToast } = useToast()
+
   const handleClickProductItem = async (productId: string) => {
     const product = productList.find(({ id }) => id === productId)
     if (!product) return
@@ -47,8 +47,8 @@ export default function ProductList({ product, category, apiUrl, token }: props)
       cartQuantity: quantity,
     }
     const result = await createCart(cartData)
-    if (result) setSuccessMessage(['장바구니에 담았습니다.'])
-    else setErrorMessage(['장바구니 담기에 실패했습니다.'])
+    if (result) showToast('장바구니에 담았습니다.', 'success')
+    else showToast('장바구니 담기에 실패했습니다..', 'error')
   }
   const handleClickBuyProduct = async () => {
     if (!selectedProduct) return
@@ -62,9 +62,9 @@ export default function ProductList({ product, category, apiUrl, token }: props)
     }
     const result = await createCart(cartData)
     if (result) {
-      setSuccessMessage(['장바구니에 담았습니다.'])
+      showToast('장바구니에 담았습니다.', 'success')
       router.push('/users/cart')
-    } else setErrorMessage(['장바구니 담기에 실패했습니다.'])
+    } else showToast('장바구니에 담기에 실패했습니다..', 'error')
   }
   const handleClickMinusBtn = () => {
     if (quantity === 1) return
@@ -106,8 +106,6 @@ export default function ProductList({ product, category, apiUrl, token }: props)
   }, [])
   return (
     <div className="flex-col w-full items-center">
-      {successMessage.length !== 0 && <SuccessToast message={successMessage} />}
-      {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
       {showTopMoveBtn === true && (
         <button
           className="fixed top-12 right-12"

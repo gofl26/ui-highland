@@ -13,7 +13,7 @@ export default function SignupAgreeForm(props: PropsType) {
   const [personalAgree, setPersonalAgree] = useState(false)
   const [serviceAgree, setServiceAgree] = useState(false)
   return (
-    <>
+    <div className="flex flex-col items-center gap-4">
       <div className="flex w-1/2 h-48">
         <PersonalInfoDocumentForm />
       </div>
@@ -54,6 +54,6 @@ export default function SignupAgreeForm(props: PropsType) {
       >
         다음
       </button>
-    </>
+    </div>
   )
 }
