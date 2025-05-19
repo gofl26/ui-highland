@@ -1,9 +1,12 @@
-import Image from 'next/image'
+import ReviewList from '@/components/list/ReviewList'
+import { getReview } from '@/serverActions/reviews'
 
 export default async function Review() {
+  const review = await getReview()
+  if (!review) return null
   return (
     <div className="flex flex-col w-full items-center text-textDefault overflow-auto">
-      <p className="text-lg font-semibold">상품후기</p>
+      <ReviewList reviewInfo={review} />
     </div>
   )
 }

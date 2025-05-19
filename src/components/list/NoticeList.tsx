@@ -79,25 +79,25 @@ export default function NoticeList({ noticeInfo }: props) {
       <p className="flex justify-center mt-12 text-3xl font-semibold">커뮤니티</p>
       <div className="flex justify-center gap-6 mt-12">
         <button
-          className={`flex justify-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/notice' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
+          className={`flex justify-center items-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/notice' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
           onClick={() => router.push('/community/notice')}
         >
           공지사항
         </button>
         <button
-          className={`flex justify-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/customer' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
+          className={`flex justify-center items-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/customer' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
           onClick={() => router.push('/community/customer')}
         >
           고객센터
         </button>
         <button
-          className={`flex justify-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/review' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
+          className={`flex justify-center items-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/review' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
           onClick={() => router.push('/community/review')}
         >
           상품후기
         </button>
       </div>
-      <div className="w-full mt-12">
+      <div className="w-full max-w-4xl mt-12">
         <div className="flex w-full items-center mb-4">
           <p className="text-sm">총 {totalNumber} 개</p>
         </div>

@@ -14,7 +14,7 @@ export default function NoticeModal({ isOpen, onClose, notice, children }: Props
   if (!isOpen) return null
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="flex flex-col w-full h-[700px] bg-white rounded-lg shadow-lg max-w-full mx-8 p-6">
+      <div className="flex flex-col w-full h-[700px] bg-white rounded-lg shadow-lg max-w-4xl mx-8 p-6">
         <div className="flex">
           <button className="text-textSuccess font-semibold" onClick={() => onClose()}>
             {'공지사항 >'}

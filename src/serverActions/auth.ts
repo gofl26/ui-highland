@@ -1,6 +1,8 @@
 'use server'
 import { auth, signIn, signOut } from '@/auth'
 
+const API_URL = process.env.API_URL || ''
+
 export const signInWithCredentials = async (formData: FormData) => {
   try {
     await signIn('credentials', {
@@ -26,13 +28,14 @@ interface logoutBodyForm {
 }
 export const signOutWithForm = async (body: logoutBodyForm) => {
   try {
-    const result = await fetch('http://localhost:3001/api/auth/logout', {
+    const result = await fetch(`${API_URL}/api/auth/logout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
     })
+    console.info(result.ok)
     if (result.ok) {
       await signOut()
       return true

@@ -125,11 +125,11 @@ export default function ProductList({ product, category, apiUrl, token }: props)
         {productList.map((product) => (
           <div
             key={product.id}
-            className="bg-bgSecondary rounded-lg border overflow-hidden cursor-pointer"
+            className="bg-bgSecondary rounded-lg border overflow-hidden cursor-pointer h-[410px]"
             onClick={() => handleClickProductItem(product.id)}
           >
             {/* 이미지 */}
-            <div className="relative w-full h-48 group">
+            <div className="relative w-full h-[320px] group">
               <Image
                 src={product.productsFile}
                 alt={product.productName}

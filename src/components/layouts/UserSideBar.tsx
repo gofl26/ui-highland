@@ -1,26 +1,13 @@
 import Image from 'next/image'
 import { getUserInfo } from '@/serverActions/handler'
-import { getCategory } from '@/serverActions/categories'
-import { manageSideBarMenu } from '@/stores/sideBarMenu'
+import { userSideBarMenu } from '@/stores/sideBarMenu'
 import SideBarMenuButton from '@/components/commons/button/sideBarMenuButton'
 import ErrorToast from '@/components/commons/toast/ErrorToast'
-import type { categoryResponse } from '@/types/category'
 
-export default async function ManageSideBar() {
+export default async function UserSideBar() {
   const userInfo = await getUserInfo()
   if (!userInfo) return null
-
-  let errorMessage = []
-  let categories: categoryResponse[] = []
-  try {
-    const rows = await getCategory()
-    if (!rows) {
-      errorMessage.push('카테고리 정보를 불러오지 못했습니다.')
-    } else categories = rows
-  } catch (error) {
-    errorMessage.push('카테고리 정보를 불러오지 못했습니다.')
-    console.error('🔥 fetch error:', error)
-  }
+  let errorMessage: string[] = []
   return (
     <div className="flex flex-col w-64 shrink-0 gap-8 p-4 bg-bgSideBar text-textDefault overflow-y-auto custom-scroll">
       {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
@@ -39,8 +26,8 @@ export default async function ManageSideBar() {
         </div>
       </div>
       <div className="flex flex-col w-full">
-        {manageSideBarMenu.map(({ path, name }, index) => (
-          <SideBarMenuButton key={index} path={path} name={name} categories={categories} type="manage" />
+        {userSideBarMenu.map(({ path, name }, index) => (
+          <SideBarMenuButton key={index} path={path} name={name} type="user" />
         ))}
       </div>
     </div>

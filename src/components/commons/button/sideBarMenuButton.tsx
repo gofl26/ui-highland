@@ -9,9 +9,10 @@ interface Props {
   path: string
   name: string
   categories?: categoryResponse[]
+  type: string
 }
 export default function SideBarMenuButton(props: Props) {
-  const { path, name, categories } = props
+  const { path, name, categories, type = '' } = props
   const router = useRouter()
   const pathname = usePathname()
 
@@ -47,7 +48,7 @@ export default function SideBarMenuButton(props: Props) {
               <button
                 key={index}
                 className={`flex w-full px-4 py-2 rounded-lg hover:bg-bgHoverSideBar ${selectedMenu === categoryUrl ? 'bg-bgHoverSideBar' : ''}`}
-                onClick={() => router.push(`/manage/products/${categoryUrl}`)}
+                onClick={() => router.push(`/${type}/products/${categoryUrl}`)}
               >
                 - {categoryName}
               </button>
@@ -60,7 +61,7 @@ export default function SideBarMenuButton(props: Props) {
   return (
     <button
       className={`flex px-4 py-4 rounded-lg hover:bg-bgHoverSideBar ${selectedMenu === path ? 'bg-bgHoverSideBar' : ''}`}
-      onClick={() => router.push(`/manage${path}`)}
+      onClick={() => router.push(`/${type}${path}`)}
     >
       {name}
     </button>
