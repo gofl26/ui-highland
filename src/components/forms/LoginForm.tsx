@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signInWithCredentials } from '@/serverActions/auth'
 import Input from '@/components/commons/input/defaultInput'
+import { useToast } from '@/components/commons/toast/ToastProvider'
 import { LoginForm as LoginFormType } from '@/types/login'
 
 const initLoginForm: LoginFormType = {
@@ -12,6 +13,7 @@ const initLoginForm: LoginFormType = {
 
 export default function LoginForm() {
   const router = useRouter()
+  const { showToast } = useToast()
 
   const [loginForm, setLoginForm] = useState(initLoginForm)
 
@@ -26,14 +28,12 @@ export default function LoginForm() {
     event.preventDefault()
     const formData = new FormData(event.target as HTMLFormElement)
     const result = await signInWithCredentials(formData)
-    if (result?.error) alert(result.error.message)
-    else {
-      router.push('/home')
-    }
+    if (result?.error) showToast(result.error.message, 'error')
+    else router.push('/home')
   }
 
   return (
-    <div className="flex flex-col w-1/2 lg:w-1/4 justify-center items-center mt-10 gap-2">
+    <div className="flex flex-col min-w-96 justify-center items-center gap-2">
       <form className="flex flex-col w-full rounded-lg gap-4" onSubmit={onClickLogin}>
         <Input
           value={loginForm.email}
@@ -53,7 +53,7 @@ export default function LoginForm() {
         </button>
       </form>
       <div className="flex w-full justify-between items-center">
-        <button>회원가입</button>
+        <button onClick={() => router.push('/signup')}>회원가입</button>
         <div className="flex gap-2">
           <button>아이디 찾기</button>
           <p className="w-1 h-5 border-l border-textDefault"></p>

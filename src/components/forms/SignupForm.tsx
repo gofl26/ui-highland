@@ -5,9 +5,9 @@ import { signInWithCredentials } from '@/serverActions/auth'
 import { checkEmailDuplicate } from '@/serverActions/handler'
 import SignupAgreeForm from '@/components/forms/SignupAgreeForm'
 import Input from '@/components/commons/input/defaultInput'
+import { useToast } from '@/components/commons/toast/ToastProvider'
 import formatPhoneNumber from '@/utils/formatPhoneNumber'
 import type { SignupForm } from '@/types/signup/index'
-import ErrorToast from '../commons/toast/ErrorToast'
 
 const initSignupForm: SignupForm = {
   email: '',
@@ -24,42 +24,52 @@ export default function SignupForm() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   const passwordRegex = /^(?!.*(.)\1{2})(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*]).{10,16}$/
   const router = useRouter()
+  const { showToast } = useToast()
 
   const [signupAgree, setSignupAgree] = useState(false) //개인정보 활용 동의 여부
-  const [emailError, setEamilError] = useState<boolean>()
+  const [validEmail, setValidEmail] = useState<boolean>()
   const [availableEmail, setAvailableEmial] = useState<boolean>()
   const [availablePassword, setAvailablePassword] = useState<boolean>()
+  const [availableUserName, setAvailableUserName] = useState<boolean>()
   const [signupForm, setSignupForm] = useState<SignupForm>(initSignupForm)
-  const [message, setMessage] = useState<string[]>([])
 
   const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     const newSignupForm = JSON.parse(JSON.stringify(signupForm))
-    if (name === 'email') {
-      const emailType = emailRegex.test(value)
-      if (emailType) setEamilError(true)
-      else setEamilError(false)
-    }
-    if (name === 'password') {
-      const passwordType = passwordRegex.test(value)
-      if (passwordType) setAvailablePassword(true)
-      else setAvailablePassword(false)
-    }
+    if (name === 'password') setAvailablePassword(undefined)
     if (name === 'phoneNumber') {
       newSignupForm[name] = formatPhoneNumber(value)
       setSignupForm(newSignupForm)
       return
     }
+    if (name === 'email') setAvailableEmial(undefined)
     newSignupForm[name] = value
     setSignupForm(newSignupForm)
   }
   const handleClickDuplicate = async () => {
-    if (!emailError) {
-      return
-    }
+    if (!validEmail) return
     const result = await checkEmailDuplicate(signupForm.email)
     if (result) setAvailableEmial(true)
     else setAvailableEmial(false)
+  }
+  const handleBlurEmailInput = () => {
+    const value = signupForm.email
+    const emailType = emailRegex.test(value)
+    if (emailType) setValidEmail(true)
+    else {
+      setValidEmail(false)
+      showToast('이메일 형식이 아닙니다.', 'error')
+    }
+  }
+  const handleBlurPWInput = () => {
+    const value = signupForm.password
+    const passwordType = passwordRegex.test(value)
+    if (passwordType) setAvailablePassword(true)
+    else setAvailablePassword(false)
+  }
+  const handleBlurNameInput = () => {
+    const value = signupForm.userName
+    setAvailableUserName(value ? true : false)
   }
   const handleClickGender = (gender: string) => {
     const newSignupForm = JSON.parse(JSON.stringify(signupForm))
@@ -67,20 +77,16 @@ export default function SignupForm() {
     setSignupForm(newSignupForm)
   }
   const handleClickSignup = async () => {
-    const warningMessage: string[] = []
-    if (!emailError || !availableEmail) {
-      warningMessage.push('이메일을 확인해주세요.')
-      setMessage(warningMessage)
+    if (!validEmail || !availableEmail) {
+      showToast('이메일을 확인해주세요.', 'error')
       return
     }
     if (!availablePassword) {
-      warningMessage.push('비밀번호가 형식이 맞지않습니다.')
-      setMessage(warningMessage)
+      showToast('비밀번호가 형식이 맞지않습니다.', 'error')
       return
     }
-    if (!signupForm.userName) {
-      warningMessage.push('이름을 입력해주세요.')
-      setMessage(warningMessage)
+    if (!availableUserName) {
+      showToast('이름을 입력해주세요.', 'error')
       return
     }
     try {
@@ -90,13 +96,11 @@ export default function SignupForm() {
       })
       const result = await signInWithCredentials(formData)
       if (result?.error) {
-        warningMessage.push('회원가입 실패')
-        setMessage(warningMessage)
+        showToast('회원가입 실패', 'error')
       }
       router.push('/home')
     } catch (error: any) {
-      warningMessage.push(error.message)
-      setMessage(warningMessage)
+      showToast(error.message, 'error')
     }
   }
   return (
@@ -105,28 +109,25 @@ export default function SignupForm() {
         <SignupAgreeForm setSignupAgree={setSignupAgree} />
       ) : (
         <div className="flex flex-col w-full justify-center items-center gap-4">
-          <form className="flex flex-col w-1/2 border rounded-lg border-borderDefault">
-            <div className="flex w-full h-20 border-b border-borderDefault">
+          <form className="flex flex-col w-1/2">
+            <div
+              className={`flex w-full h-20 border rounded-t-lg ${validEmail === false ? 'border-textFail' : 'mb-[-1px] border-borderDefault'}`}
+            >
               <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
                 이메일
                 <p className="text-textFail">*</p>
               </div>
               <div className="flex w-4/5 justify-between items-center px-4 py-2 gap-4">
-                <div className="flex flex-col w-full">
-                  <Input value={signupForm.email} name="email" onChange={handleChangeInput} />
-                  {emailError === false && (
-                    <p className="text-xs mt-2 text-textFail">이메일 형식이 아닙니다.</p>
-                  )}
-                  {availableEmail === true ? (
-                    <p className="text-xs mt-2 text-textSuccess">사용가능한 이메일입니다.</p>
-                  ) : availableEmail === false ? (
-                    <p className="text-xs mt-2 text-textFail">사용불가능한 이메일입니다.</p>
-                  ) : (
-                    <></>
-                  )}
+                <div className="flex flex-col flex-1">
+                  <Input
+                    value={signupForm.email}
+                    name="email"
+                    onChange={handleChangeInput}
+                    onBlur={handleBlurEmailInput}
+                  />
                 </div>
                 <button
-                  className="w-40 h-10 rounded-lg bg-bgPrimary text-textPrimary"
+                  className="w-20 h-10 rounded-lg bg-bgPrimary text-textPrimary"
                   type="button"
                   onClick={handleClickDuplicate}
                 >
@@ -134,7 +135,9 @@ export default function SignupForm() {
                 </button>
               </div>
             </div>
-            <div className="flex w-full h-20 border-b border-borderDefault">
+            <div
+              className={`flex w-full h-20 border ${validEmail === false ? 'border-t-0' : ''} ${availablePassword === false ? 'border-textFail' : 'mb-[-1px] border-borderDefault'}`}
+            >
               <div className="flex w-1/5 justify-center items-center bg-bgDefault">
                 비밀번호<p className="text-textFail">*</p>
               </div>
@@ -144,24 +147,34 @@ export default function SignupForm() {
                   type="password"
                   name="password"
                   onChange={handleChangeInput}
+                  onBlur={handleBlurPWInput}
                 />
-                {availablePassword === false && (
-                  <p className="text-xs text-textFail">
-                    10~16자, 소문자·숫자·특수문자(!@#$%^&*) 포함, 동일 문자 3회 연속 불가
-                  </p>
-                )}
+                <p className="text-xs">
+                  10~16자, 소문자·숫자·특수문자(!@#$%^&*) 포함, 동일 문자 3회 연속 불가
+                </p>
               </div>
             </div>
-            <div className="flex w-full h-20 border-b border-borderDefault">
-              <div className="flex w-1/5 justify-center items-center bg-bgDefault">
+            <div
+              className={`flex w-full h-20 border rounded-b-lg ${availablePassword === false ? 'border-t-0' : ''} ${availableUserName === false ? 'border-textFail' : 'border-borderDefault'}`}
+            >
+              <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
                 이름<p className="text-textFail">*</p>
               </div>
               <div className="flex w-4/5 justify-center items-center px-4 py-2">
-                <Input value={signupForm.userName} name="userName" onChange={handleChangeInput} />
+                <Input
+                  value={signupForm.userName}
+                  name="userName"
+                  onChange={handleChangeInput}
+                  onBlur={handleBlurNameInput}
+                />
               </div>
             </div>
-            <div className="flex w-full h-20 border-b border-borderDefault">
-              <div className="flex w-1/5 justify-center items-center bg-bgDefault">전화번호</div>
+          </form>
+          <form className="flex flex-col w-1/2 border rounded-lg border-borderDefault divide-y divide-borderDefault">
+            <div className="flex w-full h-20">
+              <div className="flex w-1/5 justify-center items-center rounded-ss-lg bg-bgDefault">
+                전화번호
+              </div>
               <div className="flex w-4/5 justify-center items-center px-4 py-2">
                 <Input
                   value={signupForm.phoneNumber}
@@ -206,7 +219,6 @@ export default function SignupForm() {
               가입
             </button>
           </div>
-          {message.length !== 0 && <ErrorToast message={message} />}
         </div>
       )}
     </>
