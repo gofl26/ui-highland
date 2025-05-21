@@ -3,8 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { updateSite, createSite } from '@/serverActions/site'
-import ErrorToast from '@/components/commons/toast/ErrorToast'
-import SuccessToast from '@/components/commons/toast/SuccessToast'
+import { useToast } from '@/components/commons/toast/ToastProvider'
 
 interface Props {
   siteInfo: { id?: string; siteName?: string; sitesFile?: File }
@@ -16,8 +15,8 @@ export default function SiteInfoAccordion(props: Props) {
   const [siteName, setSiteName] = useState<string>(siteInfo?.siteName || '')
   const [selectedFile, setSelectedFile] = useState<File | undefined>(siteInfo?.sitesFile)
   const [preview, setPreview] = useState<string | null | undefined>()
-  const [errorMessage, setErrorMessage] = useState<string[]>([])
-  const [successMessage, setSuccessMessage] = useState<string[]>([])
+
+  const { showToast } = useToast()
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,15 +46,15 @@ export default function SiteInfoAccordion(props: Props) {
       if (siteInfo.id) {
         formData.append('id', siteInfo.id)
         const result = await updateSite(formData)
-        if (!result) setErrorMessage(['저장 실패'])
-        else setSuccessMessage(['수정 성공'])
+        if (!result) showToast('저장 실패', 'error')
+        else showToast('수정 성공', 'success')
       } else {
         const result = await createSite(formData)
-        if (!result) setErrorMessage(['저장 실패'])
-        else setSuccessMessage(['생성 성공'])
+        if (!result) showToast('저장 실패', 'error')
+        else showToast('생성 성공', 'success')
       }
     } catch (error) {
-      setErrorMessage(['저장 실패'])
+      showToast('저장 실패', 'error')
     }
   }
   useEffect(() => {
@@ -132,8 +131,6 @@ export default function SiteInfoAccordion(props: Props) {
           )}
         </div>
       )}
-      {successMessage.length !== 0 && <SuccessToast message={successMessage} />}
-      {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
     </>
   )
 }

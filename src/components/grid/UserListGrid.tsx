@@ -1,9 +1,8 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { userResponse } from '@/types/users'
 import { deleteUser, getUsers, updateUsers } from '@/serverActions/handler'
-import ErrorToast from '../commons/toast/ErrorToast'
-import SuccessToast from '../commons/toast/SuccessToast'
+import { useToast } from '@/components/commons/toast/ToastProvider'
 
 type Row = {
   email: string
@@ -20,11 +19,10 @@ const columns: { key: keyof Row; label: string }[] = [
   { key: 'gender', label: '성별' },
 ]
 interface Props {
-  users: userResponse[]
+  users: { rows: userResponse[]; total: number }
 }
-export default function UserListGrid(props: Props) {
-  const { users } = props
-
+export default function UserListGrid({ users }: Props) {
+  const { rows, total } = users
   const pageSize = 10
   const roleMap: Record<string, string> = {
     admin: '관리자',
@@ -35,23 +33,18 @@ export default function UserListGrid(props: Props) {
     female: '여성',
   }
 
+  const { showToast } = useToast()
+
   const [page, setPage] = useState(1)
   const [filterColumn, setFilterColumn] = useState<
     'email' | 'userName' | 'role' | 'phoneNumber' | 'gender'
   >('userName')
   const [keyword, setKeyword] = useState('')
-  const [data, setData] = useState(users)
-  const [errorMessage, setErrorMessage] = useState<string[]>([])
-  const [successMessage, setSuccessMessage] = useState<string[]>([])
+  const [totalNumber, setTotalNumber] = useState(total)
+  const [data, setData] = useState(rows)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
   const [editMode, setEditMode] = useState(false)
   const [editableRow, setEditableRow] = useState<userResponse | null>(null)
-
-  const filteredData = useMemo(() => {
-    return data.filter((item) => item[filterColumn]?.toLowerCase().includes(keyword.toLowerCase()))
-  }, [filterColumn, keyword, data])
-
-  const pagedData = data.slice((page - 1) * pageSize, page * pageSize)
 
   const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value as keyof Row
@@ -67,16 +60,21 @@ export default function UserListGrid(props: Props) {
       if (keyword) {
         const query = `${filterColumn}.like=${keyword}`
         const result = await getUsers(query)
-        if (result) setData(result)
-        else setErrorMessage(['조회 실패'])
+        if (result) {
+          const { rows, total } = result
+          setData(rows)
+          setTotalNumber(total)
+        } else showToast('조회 실패', 'error')
       } else {
         const result = await getUsers()
-        if (result) setData(result)
-        else setErrorMessage(['조회 실패'])
+        if (result) {
+          const { rows, total } = result
+          setData(rows)
+          setTotalNumber(total)
+        } else showToast('조회 실패', 'error')
       }
     } catch (error) {
-      setErrorMessage(['조회 실패'])
-      console.info(error)
+      showToast('조회 실패', 'error')
     }
   }
   const handleClickSaveUser = async () => {
@@ -95,27 +93,25 @@ export default function UserListGrid(props: Props) {
       setData(newData)
       setEditMode(false)
       setEditableRow(null)
-      setSuccessMessage(['수정 성공'])
-    } else setErrorMessage(['수정 실패'])
+      showToast('수정 성공', 'success')
+    } else showToast('수정 실패', 'error')
   }
   const handleClickDeleteUser = async () => {
     if (selectedRowIndex === null) return
-    const result = await deleteUser(pagedData[selectedRowIndex].id)
+    const result = await deleteUser(data[selectedRowIndex].id)
     if (result) {
-      const newData = [...pagedData]
+      const newData = [...data]
       newData.splice(selectedRowIndex, 1)
       setData(newData)
       setSelectedRowIndex(null)
       setEditMode(false)
-      setSuccessMessage(['삭제 성공'])
+      showToast('삭제 성공', 'success')
     } else {
-      setErrorMessage(['삭제 실패'])
+      showToast('삭제 실패', 'error')
     }
   }
   return (
     <div className="flex w-full mt-4">
-      {successMessage.length !== 0 && <SuccessToast message={successMessage} />}
-      {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
       <div className="w-full">
         {/* Search Bar */}
         <div className="flex gap-2 mb-4">
@@ -192,7 +188,7 @@ export default function UserListGrid(props: Props) {
             </tr>
           </thead>
           <tbody>
-            {pagedData.map((row, idx) => (
+            {data.map((row, idx) => (
               <tr
                 key={idx}
                 className={`cursor-pointer ${
@@ -246,13 +242,11 @@ export default function UserListGrid(props: Props) {
             이전
           </button>
           <span>
-            {page} / {Math.max(1, Math.ceil(filteredData.length / pageSize))}
+            {page} / {Math.max(1, Math.ceil(totalNumber / pageSize))}
           </span>
           <button
-            onClick={() =>
-              setPage((p) => Math.min(Math.ceil(filteredData.length / pageSize), p + 1))
-            }
-            disabled={page >= Math.ceil(filteredData.length / pageSize)}
+            onClick={() => setPage((p) => Math.min(Math.ceil(totalNumber / pageSize), p + 1))}
+            disabled={page >= Math.ceil(totalNumber / pageSize)}
             className="px-3 py-1 border rounded disabled:opacity-50"
           >
             다음

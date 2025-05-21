@@ -8,15 +8,16 @@ function isMatch(pathname: string, urls: string[]) {
 }
 
 const requireAdminPath = '/manage'
-const requireLoginpath = ['/products/cart']
+const requireLoginpath = ['/products/cart', '/users']
+const whyhere = ['/login', '/signup']
 
 export default auth(async (req) => {
   // const { pathname } = req.nextUrl
   // if (pathname.startsWith('/svg')) {
   //   return NextResponse.next()
   // }
+  const token = await auth()
   if (req.nextUrl.pathname.includes(requireAdminPath)) {
-    const token = await auth()
     if (token?.accessToken) {
       const user = await getUserInfo()
       if (user && user.role !== 'admin') {
@@ -33,6 +34,12 @@ export default auth(async (req) => {
     const newUrl = new URL('/login', req.nextUrl.origin)
     return Response.redirect(newUrl)
   }
+  // if (isMatch(req.nextUrl.pathname, whyhere) && token?.accessToken) {
+  //   //
+  //   const newUrl = new URL('/home', req.nextUrl.origin)
+  //   console.info('🚀 newUrl:', newUrl)
+  //   return Response.redirect(newUrl)
+  // }
 })
 
 ////

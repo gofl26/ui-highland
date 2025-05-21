@@ -49,8 +49,13 @@ export default function SignupForm() {
   const handleClickDuplicate = async () => {
     if (!validEmail) return
     const result = await checkEmailDuplicate(signupForm.email)
-    if (result) setAvailableEmial(true)
-    else setAvailableEmial(false)
+    if (result) {
+      showToast('사용가능한 이메일입니다.', 'success')
+      setAvailableEmial(true)
+    } else {
+      showToast('사용중인 이메일입니다.', 'error')
+      setAvailableEmial(false)
+    }
   }
   const handleBlurEmailInput = () => {
     const value = signupForm.email
@@ -96,9 +101,10 @@ export default function SignupForm() {
       })
       const result = await signInWithCredentials(formData)
       if (result?.error) {
-        showToast('회원가입 실패', 'error')
+        return showToast('회원가입 실패', 'error')
       }
-      router.push('/home')
+      router.refresh()
+      // router.push('/home')
     } catch (error: any) {
       showToast(error.message, 'error')
     }

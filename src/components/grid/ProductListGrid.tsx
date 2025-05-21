@@ -2,8 +2,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
-import SuccessToast from '@/components/commons/toast/SuccessToast'
-import ErrorToast from '@/components/commons/toast/ErrorToast'
+import { useToast } from '@/components/commons/toast/ToastProvider'
 import { createProduct, deleteProduct, getProduct, updateProduct } from '@/serverActions/products'
 import CreateProductModal from '../modals/CreateProductModal'
 import Input from '@/components/commons/input/defaultInput'
@@ -42,6 +41,7 @@ export default function ProductListGrid(props: Props) {
   const pageSize = 10
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const pathname = usePathname()
+  const { showToast } = useToast()
 
   const [categoryId, setCategoryId] = useState('')
   const [page, setPage] = useState(1)
@@ -51,8 +51,6 @@ export default function ProductListGrid(props: Props) {
   const [keyword, setKeyword] = useState('')
   const [data, setData] = useState<productResponse[]>([])
   const [totalNumber, setTotalNumber] = useState(0)
-  const [errorMessage, setErrorMessage] = useState<string[]>([])
-  const [successMessage, setSuccessMessage] = useState<string[]>([])
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
   const [editMode, setEditMode] = useState(false)
   const [openCreateProductModal, setOpenCreateProductModal] = useState(false)
@@ -74,20 +72,19 @@ export default function ProductListGrid(props: Props) {
           const { rows, total } = result
           setData(rows)
           setTotalNumber(total)
-        } else setErrorMessage(['조회 실패'])
+        } else showToast('조회 실패', 'error')
       } else {
         const result = await getProduct(`from=0&size=10&categoryId=${categoryId}`)
         if (result) {
           const { rows, total } = result
           setData(rows)
           setTotalNumber(total)
-        } else setErrorMessage(['조회 실패'])
+        } else showToast('조회 실패', 'error')
       }
     } catch (error) {
-      setErrorMessage(['조회 실패'])
-      console.info(error)
+      showToast('조회 실패', 'error')
     }
-  }, [filterColumn, keyword, categoryId])
+  }, [filterColumn, keyword, categoryId, showToast])
   const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = event.target
     const newProductForm = JSON.parse(JSON.stringify(productForm))
@@ -124,14 +121,14 @@ export default function ProductListGrid(props: Props) {
       formData.append('productQuality', productForm.productQuality)
       formData.append('productOrder', JSON.stringify(data.length))
       const result = await createProduct(formData)
-      if (!result) setErrorMessage(['저장 실패'])
+      if (!result) showToast('저장 실패', 'error')
       else {
         setOpenCreateProductModal(false)
-        setSuccessMessage(['저장 성공'])
+        showToast('저장 성공', 'success')
         setData((prev) => [...prev, result[0]])
       }
     } catch (error) {
-      setErrorMessage(['저장 실패'])
+      showToast('저장 실패', 'error')
     }
   }
   const handleClickUpdateProduct = async () => {
@@ -148,15 +145,15 @@ export default function ProductListGrid(props: Props) {
       formData.append('productQuality', productForm.productQuality)
       formData.append('productOrder', JSON.stringify(data.length))
       const result = await updateProduct(formData)
-      if (!result) setErrorMessage(['저장 실패'])
+      if (!result) showToast('저장 실패', 'error')
       else {
         setEditMode(false)
-        setSuccessMessage(['저장 성공'])
+        showToast('저장 성공', 'success')
         setSelectedRowIndex(null)
         handleClickSearch()
       }
     } catch (error) {
-      setErrorMessage(['저장 실패'])
+      showToast('저장 실패', 'error')
     }
   }
   const handleClickDeleteProduct = async () => {
@@ -168,8 +165,8 @@ export default function ProductListGrid(props: Props) {
       setData(newData)
       setSelectedRowIndex(null)
       setTotalNumber((p) => p - 1)
-      setSuccessMessage(['삭제 성공'])
-    } else setErrorMessage(['삭제 실패'])
+      showToast('삭제 성공', 'success')
+    } else showToast('삭제 실패', 'error')
   }
   const handleClickPreBtn = async () => {
     setPage((p) => Math.max(1, p - 1))
@@ -181,18 +178,17 @@ export default function ProductListGrid(props: Props) {
           const { rows, total } = result
           setData(rows)
           setTotalNumber(total)
-        } else setErrorMessage(['조회 실패'])
+        } else showToast('조회 실패', 'error')
       } else {
         const result = await getProduct(`from=${(page - 2) * 10}&size=10`)
         if (result) {
           const { rows, total } = result
           setData(rows)
           setTotalNumber(total)
-        } else setErrorMessage(['조회 실패'])
+        } else showToast('조회 실패', 'error')
       }
     } catch (error) {
-      setErrorMessage(['조회 실패'])
-      console.info(error)
+      showToast('조회 실패', 'error')
     }
   }
   const handleClickNextBtn = async () => {
@@ -205,18 +201,17 @@ export default function ProductListGrid(props: Props) {
           const { rows, total } = result
           setData(rows)
           setTotalNumber(total)
-        } else setErrorMessage(['조회 실패'])
+        } else showToast('조회 실패', 'error')
       } else {
         const result = await getProduct(`from=${page * 10}&size=10`)
         if (result) {
           const { rows, total } = result
           setData(rows)
           setTotalNumber(total)
-        } else setErrorMessage(['조회 실패'])
+        } else showToast('조회 실패', 'error')
       }
     } catch (error) {
-      setErrorMessage(['조회 실패'])
-      console.info(error)
+      showToast('조회 실패', 'error')
     }
   }
   useEffect(() => {
@@ -228,8 +223,6 @@ export default function ProductListGrid(props: Props) {
   }, [categoryId, handleClickSearch])
   return (
     <div className="flex w-full mt-4">
-      {successMessage.length !== 0 && <SuccessToast message={successMessage} />}
-      {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
       <div className="w-full">
         {/* Search Bar */}
         <div className="flex gap-2 mb-4">

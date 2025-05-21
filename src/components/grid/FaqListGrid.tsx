@@ -1,11 +1,11 @@
 'use client'
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import moment from 'moment'
-import SuccessToast from '@/components/commons/toast/SuccessToast'
-import ErrorToast from '@/components/commons/toast/ErrorToast'
-import { faqResponse, faqForm } from '@/types/faq'
 import { createFaq, getFaq, deleteFaq, updateFaq } from '@/serverActions/faq'
+import { useToast } from '@/components/commons/toast/ToastProvider'
 import CreateProductModal from '@/components/modals/CreateProductModal'
+import { inquiryCategory } from '@/stores/inquiry'
+import { faqResponse, faqForm } from '@/types/faq'
 
 type Row = {
   faqQuestion: string
@@ -30,9 +30,8 @@ interface props {
 export default function FaqListGrid({ faqInfo }: props) {
   const { rows, total } = faqInfo
   const pageSize = 10
+  const { showToast } = useToast()
 
-  const [successMessage, setSuccessMessage] = useState<string[]>([])
-  const [errorMessage, setErrorMessage] = useState<string[]>([])
   const [totalNumber, setTotalNumber] = useState(total)
   const [page, setPage] = useState(1)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
@@ -60,21 +59,21 @@ export default function FaqListGrid({ faqInfo }: props) {
       setData(newData)
       setSelectedRowIndex(null)
       setTotalNumber((p) => p - 1)
-      setSuccessMessage(['삭제 성공'])
-    } else setErrorMessage(['삭제 실패'])
+      showToast('삭제 성공', 'success')
+    } else showToast('삭제 실패', 'error')
   }
   const handleClickUpdateFaq = async () => {
     try {
       if (selectedRowIndex === null) return
       const result = await updateFaq({ id: data[selectedRowIndex].id, ...faqForm })
-      if (!result) setErrorMessage(['저장 실패'])
+      if (!result) showToast('저장 실패', 'error')
       else {
         setEditMode(false)
-        setSuccessMessage(['저장 성공'])
+        showToast('저장 성공', 'success')
         setSelectedRowIndex(null)
         const result = await getFaq()
         if (!result) {
-          setErrorMessage(['조회 실패'])
+          showToast('조회 실패', 'error')
           return
         }
         const { rows, total } = result
@@ -82,20 +81,20 @@ export default function FaqListGrid({ faqInfo }: props) {
         setTotalNumber(total)
       }
     } catch (error) {
-      setErrorMessage(['저장 실패'])
+      showToast('저장 실패', 'error')
     }
   }
   const handleClickCreateFaq = async () => {
     try {
       const result = await createFaq(faqForm)
-      if (!result) setErrorMessage(['저장 실패'])
+      if (!result) showToast('저장 실패', 'error')
       else {
         setOpenCreateFaqModal(false)
         setData((prev) => [...prev, result[0]])
-        setSuccessMessage(['저장 성공'])
+        showToast('저장 성공', 'success')
       }
     } catch (error) {
-      setErrorMessage(['저장 실패'])
+      showToast('저장 실패', 'error')
     }
   }
   const handleClickPreBtn = async () => {
@@ -106,10 +105,9 @@ export default function FaqListGrid({ faqInfo }: props) {
         const { rows, total } = result
         setData(rows)
         setTotalNumber(total)
-      } else setErrorMessage(['조회 실패'])
+      } else showToast('조회 실패', 'error')
     } catch (error) {
-      setErrorMessage(['조회 실패'])
-      console.info(error)
+      showToast('조회 실패', 'error')
     }
   }
   const handleClickNextBtn = async () => {
@@ -120,30 +118,13 @@ export default function FaqListGrid({ faqInfo }: props) {
         const { rows, total } = result
         setData(rows)
         setTotalNumber(total)
-      } else setErrorMessage(['조회 실패'])
+      } else showToast('조회 실패', 'error')
     } catch (error) {
-      setErrorMessage(['조회 실패'])
-      console.info(error)
+      showToast('조회 실패', 'error')
     }
   }
-  useEffect(() => {
-    if (!successMessage.length) return
-    const timer = setTimeout(() => {
-      setSuccessMessage([])
-    }, 5000)
-    clearTimeout(timer)
-  }, [successMessage])
-  useEffect(() => {
-    if (!errorMessage.length) return
-    const timer = setTimeout(() => {
-      setErrorMessage([])
-    }, 5000)
-    clearTimeout(timer)
-  }, [errorMessage])
   return (
     <div className="flex w-full mt-4">
-      {successMessage.length !== 0 && <SuccessToast message={successMessage} />}
-      {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
       <div className="w-full">
         <div className="flex w-full justify-between items-center mb-4">
           <p className="text-sm">총 {totalNumber} 개</p>
@@ -203,8 +184,9 @@ export default function FaqListGrid({ faqInfo }: props) {
                         setFaqForm(newFaqForm)
                       }}
                     >
-                      <option>배송문의</option>
-                      <option>상품문의</option>
+                      {inquiryCategory.map((category, index) => (
+                        <option key={index}>{category}</option>
+                      ))}
                     </select>
                   </div>
                 </div>

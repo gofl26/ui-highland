@@ -4,8 +4,7 @@ import Input from '@/components/commons/input/defaultInput'
 import { updateUserInfo } from '@/serverActions/handler'
 import type { userVerify } from '@/types/users'
 import type { SignupForm } from '@/types/signup/index'
-import ErrorToast from '../commons/toast/ErrorToast'
-import SuccessToast from '../commons/toast/SuccessToast'
+import { useToast } from '@/components/commons/toast/ToastProvider'
 
 interface Props {
   userInfo: userVerify
@@ -24,10 +23,10 @@ export default function UserInfoForm(props: Props) {
     gender: '',
   }
   const passwordRegex = /^(?!.*(.)\1{2})(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*]).{10,16}$/
+  const { showToast } = useToast()
+
   const [signupForm, setSignupForm] = useState<SignupForm>(initSignupForm)
   const [availablePassword, setAvailablePassword] = useState<boolean>()
-  const [errorMessage, setErrorMessage] = useState<string[]>([])
-  const [successMessage, setSuccessMessage] = useState<string[]>([])
 
   const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -46,18 +45,15 @@ export default function UserInfoForm(props: Props) {
         password: signupForm.password,
       }
       const result = await updateUserInfo(body)
-      if (result) setSuccessMessage(['수정 성공'])
-      else setErrorMessage(['저장 실패'])
+      if (result) showToast('수정 성공', 'success')
+      else showToast('수정 실패', 'error')
     } catch (error) {
-      setErrorMessage(['저장 실패'])
-      console.info(error)
+      showToast('수정 실패', 'error')
     }
   }
   return (
     <div className="flex flex-col w-full justify-center items-center">
-      {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
-      {successMessage.length !== 0 && <SuccessToast message={successMessage} />}
-      <form className="flex flex-col w-1/2 border rounded-lg border-borderDefault">
+      <form className="flex flex-col w-full max-w-2xl border rounded-lg border-borderDefault">
         <div className="flex w-full h-20 border-b border-borderDefault">
           <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
             이메일
@@ -87,7 +83,7 @@ export default function UserInfoForm(props: Props) {
           </div>
         </div>
       </form>
-      <div className="flex w-1/2 justify-end items-center mt-4">
+      <div className="flex w-full max-w-2xl justify-end items-center mt-4">
         <button
           className="bg-bgPrimary text-textPrimary px-4 py-2 rounded-lg"
           onClick={handleClickSaveBtn}

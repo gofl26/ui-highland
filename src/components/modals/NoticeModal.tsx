@@ -30,7 +30,9 @@ export default function NoticeModal({ isOpen, onClose, notice, children }: Props
           {moment(notice.createdAt).format('YYYY-MM-DD HH:mm')}
         </p>
         <p className="border-b border-borderDefault h-1"></p>
-        <div className="flex flex-col flex-1 w-full mt-4 px-8 overflow-y-auto">{children}</div>
+        <div className="flex flex-col flex-1 w-full mt-4 px-8 overflow-y-auto custom-scroll">
+          {children}
+        </div>
         <div className="flex w-full justify-center">
           <button
             className="w-20 bg-bgPrimary text-textPrimary px-3 py-1 rounded-lg font-semibold"
