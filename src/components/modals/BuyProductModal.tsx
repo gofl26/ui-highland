@@ -18,7 +18,9 @@ export default function BuyProductModal({ isOpen, onClose, children }: Props) {
             <X />
           </button>
         </div>
-        <div className="flex flex-col flex-1 w-full mt-4 px-8 overflow-y-auto">{children}</div>
+        <div className="flex flex-col flex-1 w-full mt-4 px-8 overflow-y-auto custom-scroll">
+          {children}
+        </div>
       </div>
     </div>
   )

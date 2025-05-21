@@ -12,7 +12,7 @@ export const manageSideBarMenu = [
 
 export const userSideBarMenu = [
   { path: '/shopping/orderList', name: '주문 목록 / 배송 조회' },
-  { path: '/myPost/inquiry', name: '문의하기' },
+  { path: '/myPost/inquiry', name: '내가 쓴 문의' },
   { path: '/myPost/review', name: '후기쓰기' },
   { path: '/myInfo', name: '개인정보 수정' },
 ]

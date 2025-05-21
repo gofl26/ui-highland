@@ -4,10 +4,10 @@ import { usePathname, useRouter } from 'next/navigation'
 import moment from 'moment'
 import { noticeResponse } from '@/types/notice'
 import TiptapViewer from '@/lib/tiptapViewer/TiptapVIewer'
-import NoticeModal from '../modals/NoticeModal'
-import SuccessToast from '@/components/commons/toast/SuccessToast'
-import ErrorToast from '@/components/commons/toast/ErrorToast'
+import NoticeModal from '@/components/modals/NoticeModal'
+import { useToast } from '@/components/commons/toast/ToastProvider'
 import { getNotice } from '@/serverActions/notice'
+
 type Row = {
   noticeCategory: string
   noticeTitle: string
@@ -25,16 +25,17 @@ interface props {
 export default function NoticeList({ noticeInfo }: props) {
   const { rows, total } = noticeInfo
   const pageSize = 10
+
   const [data, setData] = useState(rows)
   const [page, setPage] = useState(1)
   const [totalNumber, setTotalNumber] = useState(0)
   const [currentPage, setCurrentPage] = useState('')
   const [notice, setNotice] = useState<noticeResponse>()
   const [openNoticeModal, setOpenNoticeModal] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string[]>([])
-  const [successMessage, setSuccessMessage] = useState<string[]>([])
+
   const pathname = usePathname()
   const router = useRouter()
+  const { showToast } = useToast()
 
   const formatCellValue = (key: keyof Row, value: string | boolean) => {
     if (key === 'createdAt' && typeof value !== 'boolean') return moment(value).format('YYYY-MM-DD')
@@ -48,10 +49,9 @@ export default function NoticeList({ noticeInfo }: props) {
         const { rows, total } = result
         setData(rows)
         setTotalNumber(total)
-      } else setErrorMessage(['조회 실패'])
+      } else showToast('조회 실패', 'error')
     } catch (error) {
-      setErrorMessage(['조회 실패'])
-      console.info(error)
+      showToast('조회 실패', 'error')
     }
   }
   const handleClickNextBtn = async () => {
@@ -62,10 +62,9 @@ export default function NoticeList({ noticeInfo }: props) {
         const { rows, total } = result
         setData(rows)
         setTotalNumber(total)
-      } else setErrorMessage(['조회 실패'])
+      } else showToast('조회 실패', 'error')
     } catch (error) {
-      setErrorMessage(['조회 실패'])
-      console.info(error)
+      showToast('조회 실패', 'error')
     }
   }
   useEffect(() => {
@@ -74,8 +73,6 @@ export default function NoticeList({ noticeInfo }: props) {
   }, [pathname, total])
   return (
     <div className="flex flex-col items-center w-full px-20">
-      {successMessage.length !== 0 && <SuccessToast message={successMessage} />}
-      {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
       <p className="flex justify-center mt-12 text-3xl font-semibold">커뮤니티</p>
       <div className="flex justify-center gap-6 mt-12">
         <button

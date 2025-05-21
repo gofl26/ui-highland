@@ -1,7 +1,6 @@
 'use client'
-import { useState, useEffect } from 'react'
-import SuccessToast from '@/components/commons/toast/SuccessToast'
-import ErrorToast from '@/components/commons/toast/ErrorToast'
+import { useState } from 'react'
+import { useToast } from '@/components/commons/toast/ToastProvider'
 import { getReview } from '@/serverActions/reviews'
 import type { reviewResponse, reviewForm } from '@/types/review'
 
@@ -31,9 +30,8 @@ export default function ReviewListGrid({ reviewInfo }: props) {
     { key: 'reviewComment', label: '후기' },
     { key: 'createdAt', label: '후기 작성일' },
   ]
+  const { showToast } = useToast()
 
-  const [successMessage, setSuccessMessage] = useState<string[]>([])
-  const [errorMessage, setErrorMessage] = useState<string[]>([])
   const [totalNumber, setTotalNumber] = useState(total)
   const [page, setPage] = useState(1)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
@@ -50,10 +48,9 @@ export default function ReviewListGrid({ reviewInfo }: props) {
         const { rows, total } = result
         setData(rows)
         setTotalNumber(total)
-      } else setErrorMessage(['조회 실패'])
+      } else showToast('조회 실패', 'error')
     } catch (error) {
-      setErrorMessage(['조회 실패'])
-      console.info(error)
+      showToast('조회 실패', 'error')
     }
   }
   const handleClickNextBtn = async () => {
@@ -64,16 +61,13 @@ export default function ReviewListGrid({ reviewInfo }: props) {
         const { rows, total } = result
         setData(rows)
         setTotalNumber(total)
-      } else setErrorMessage(['조회 실패'])
+      } else showToast('조회 실패', 'error')
     } catch (error) {
-      setErrorMessage(['조회 실패'])
-      console.info(error)
+      showToast('조회 실패', 'error')
     }
   }
   return (
     <div className="flex w-full mt-4">
-      {successMessage.length !== 0 && <SuccessToast message={successMessage} />}
-      {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
       <div className="w-full">
         <div className="flex w-full justify-between items-center mb-4">
           <p className="text-sm">총 {totalNumber} 개</p>

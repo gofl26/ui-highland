@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { createCategory, updateCategory, deleteCategory } from '@/serverActions/categories'
-import ErrorToast from '@/components/commons/toast/ErrorToast'
-import SuccessToast from '@/components/commons/toast/SuccessToast'
+import { useToast } from '@/components/commons/toast/ToastProvider'
 import { categoryResponse } from '@/types/category'
 interface Props {
   categoryInfo: categoryResponse[]
@@ -12,8 +11,8 @@ interface Props {
 export default function CategoryInfoAccordion(props: Props) {
   const { categoryInfo } = props
   const [category, setCategory] = useState<categoryResponse[]>(categoryInfo)
-  const [errorMessage, setErrorMessage] = useState<string[]>([])
-  const [successMessage, setSuccessMessage] = useState<string[]>([])
+
+  const { showToast } = useToast()
 
   const handleAddCategoryRow = () => {
     setCategory((prev) => [
@@ -34,10 +33,11 @@ export default function CategoryInfoAccordion(props: Props) {
         const result = await deleteCategory(category[index].id)
         if (result) {
           setCategory((prev) => prev.filter((item, _index) => _index !== index))
+          showToast('삭제 성공', 'success')
         }
       }
     } catch (error) {
-      setErrorMessage(['삭제 실패'])
+      showToast('삭제 실패', 'error')
     }
   }
   const handleClickSaveCategory = async () => {
@@ -70,9 +70,9 @@ export default function CategoryInfoAccordion(props: Props) {
         [],
       )
       setCategory(newCategoryInfo)
-      setSuccessMessage(['저장 성공'])
+      showToast('저장 성공', 'success')
     } catch (error) {
-      setErrorMessage(['저장 실패'])
+      showToast('저장 실패', 'error')
     }
   }
 
@@ -146,8 +146,6 @@ export default function CategoryInfoAccordion(props: Props) {
           </button>
         </div>
       </div>
-      {successMessage.length !== 0 && <SuccessToast message={successMessage} />}
-      {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
     </>
   )
 }

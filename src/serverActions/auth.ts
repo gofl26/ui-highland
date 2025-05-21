@@ -35,7 +35,6 @@ export const signOutWithForm = async (body: logoutBodyForm) => {
       },
       body: JSON.stringify(body),
     })
-    console.info(result.ok)
     if (result.ok) {
       await signOut()
       return true

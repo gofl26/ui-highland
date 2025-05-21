@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import JotaiRootWrapper from '@/components/jotai/Jotai'
+import { ToastProvider } from '@/components/commons/toast/ToastProvider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,7 +27,9 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased custom-scroll`}>
-        <JotaiRootWrapper>{children}</JotaiRootWrapper>
+        <JotaiRootWrapper>
+          <ToastProvider>{children}</ToastProvider>
+        </JotaiRootWrapper>
       </body>
     </html>
   )

@@ -1,9 +1,18 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Fragment } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import moment from 'moment'
-import { faqResponse } from '@/types/faq'
-import { inquiryResponse } from '@/types/inquiry'
+import type { Session } from 'next-auth'
+import { useAtomValue } from 'jotai'
+import { useResetAtom } from 'jotai/utils'
+import { createInquiry, getInquiry } from '@/serverActions/inquiries'
+import CreateInquiryModal from '@/components/modals/CreateInquiryModal'
+import InquiryForm from '@/components/forms/InquiryForm'
+import { useToast } from '@/components/commons/toast/ToastProvider'
+import { atomInquiryInfo } from '@/stores/atoms/inquiryAtom'
+import type { faqResponse } from '@/types/faq'
+import type { inquiryResponse, inquiryForm } from '@/types/inquiry'
+import { productResponse } from '@/types/product'
 
 type Row = {
   answerAt: string
@@ -19,21 +28,42 @@ const columns: { key: keyof Row; label: string; width: string }[] = [
   { key: 'userId', label: '작성자', width: '' },
   { key: 'createdAt', label: '등록일', width: '' },
 ]
+
 interface props {
   faqInfo: { rows: faqResponse[]; total: number }
   inquiryInfo: { rows: inquiryResponse[]; total: number }
+  productInfo: { rows: productResponse[]; total: number }
+  token: null | Session
 }
-export default function CustomerList({ faqInfo, inquiryInfo }: props) {
+export default function CustomerList({ faqInfo, inquiryInfo, productInfo, token }: props) {
   const { rows: faqRows } = faqInfo
   const { rows: inquiryRows } = inquiryInfo
+  const { rows: productRows } = productInfo
   const [faqData] = useState(faqRows)
   const [inquiryData, setInquiryData] = useState(inquiryRows)
   const [currentPage, setCurrentPage] = useState('')
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const [openInquiryIndex, setOpenInquiryIndex] = useState<number | null>(null)
+  const [openCreateInquiryModal, setOpenCreateInquiryModal] = useState(false)
+
+  const inquiryForm = useAtomValue<inquiryForm>(atomInquiryInfo)
+  const resetForm = useResetAtom(atomInquiryInfo)
   const pathname = usePathname()
   const router = useRouter()
+  const { showToast } = useToast()
 
+  const handleClickSaveInquiry = async () => {
+    if (!inquiryForm.inquiryTitle || !inquiryForm.productId)
+      return showToast('상품과 문의를 작성해주세요.', 'error')
+    const result = await createInquiry(inquiryForm)
+    if (!result) return showToast('문의 등록에 실패했습니다.', 'error')
+    const inquiryResult = await getInquiry()
+    if (!inquiryResult) return showToast('문의 조회에 실패했습니다.', 'error')
+    const { rows, total } = inquiryResult
+    setInquiryData(rows)
+    resetForm()
+    setOpenCreateInquiryModal(false)
+  }
   const formatCellValue = (key: keyof Row, value: string | boolean) => {
     if (key === 'userId' && typeof value === 'string') {
       const chars = [...value]
@@ -98,8 +128,30 @@ export default function CustomerList({ faqInfo, inquiryInfo }: props) {
           ))}
         </div>
         {/* 묻고 답하기 */}
-        <p className="mt-4 font-semibold border-b border-borderPrimary">묻고 답하기</p>
-        <table className="min-w-full border-collapse border border-borderDefault text-sm">
+        <div
+          className={`flex w-full items-center mt-4 py-1 border-b border-borderPrimary ${token ? 'justify-between' : ''}`}
+        >
+          <p className="font-semibold">묻고 답하기</p>
+          {token && (
+            <button
+              className="px-3 py-2 bg-bgPrimary text-textPrimary rounded-lg"
+              onClick={() => setOpenCreateInquiryModal(true)}
+            >
+              작성하기
+            </button>
+          )}
+        </div>
+        {openCreateInquiryModal && (
+          <CreateInquiryModal
+            isOpen={openCreateInquiryModal}
+            onClose={() => setOpenCreateInquiryModal(false)}
+            onSave={handleClickSaveInquiry}
+          >
+            <p className="text-xl font-semibold">문의 글 작성</p>
+            <InquiryForm className="w-full mt-4" products={productRows} />
+          </CreateInquiryModal>
+        )}
+        <table className="min-w-full mt-4 border-collapse border border-borderDefault text-sm">
           <thead>
             <tr className="bg-bgHeader">
               {columns.map(({ key, label, width }) => (
@@ -111,9 +163,8 @@ export default function CustomerList({ faqInfo, inquiryInfo }: props) {
           </thead>
           <tbody>
             {inquiryData.map((row: any, idx: number) => (
-              <>
+              <Fragment key={idx}>
                 <tr
-                  key={idx}
                   className="cursor-pointer even:bg-gray-50 hover:bg-gray-100"
                   onClick={() => setOpenInquiryIndex((prev) => (prev === idx ? null : idx))}
                 >
@@ -145,7 +196,7 @@ export default function CustomerList({ faqInfo, inquiryInfo }: props) {
                     </div>
                   </td>
                 </tr>
-              </>
+              </Fragment>
             ))}
           </tbody>
         </table>

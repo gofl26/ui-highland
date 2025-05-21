@@ -4,19 +4,18 @@ import type { siteResponse } from '@/types/sites'
 
 const API_URL = process.env.API_URL || ''
 
-export async function getSite(): Promise<siteResponse | undefined> {
+export async function getSite(): Promise<siteResponse[] | undefined> {
   try {
     const result = await fetch(`${API_URL}/api/sites/get`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-  })
+    })
     const {
       data: { rows = [] },
     }: { data: { rows: siteResponse[] } } = await result.json()
-    if (rows.length > 0) return rows[0]
-    else return
+    return rows
   } catch (error) {
     return
   }

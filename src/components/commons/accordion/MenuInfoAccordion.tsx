@@ -4,8 +4,7 @@ import { useState } from 'react'
 import { GripVertical } from 'lucide-react'
 import { deleteMenu, updateMenu, createMenu } from '@/serverActions/menu'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
-import ErrorToast from '@/components/commons/toast/ErrorToast'
-import SuccessToast from '@/components/commons/toast/SuccessToast'
+import { useToast } from '@/components/commons/toast/ToastProvider'
 import { menuResponse } from '@/types/menu'
 interface Props {
   menuInfo: menuResponse[]
@@ -15,8 +14,8 @@ export default function MenuInfoAccordion(props: Props) {
   const { menuInfo } = props
   const [menu, setMenu] = useState<menuResponse[]>(menuInfo)
   const [isSorting, setIsSorting] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string[]>([])
-  const [successMessage, setSuccessMessage] = useState<string[]>([])
+
+  const { showToast } = useToast()
 
   const handleDragEnd = (result: any) => {
     if (!result.destination) return
@@ -52,10 +51,11 @@ export default function MenuInfoAccordion(props: Props) {
         const result = await deleteMenu(menu[menuOrder].id)
         if (result) {
           setMenu((prev) => prev.filter((item) => item.menuOrder !== menuOrder))
+          showToast('삭제 성공', 'success')
         }
       }
     } catch (error) {
-      setErrorMessage(['삭제 실패'])
+      showToast('삭제 실패', 'error')
     }
   }
   const handleClickSaveMenu = async () => {
@@ -88,9 +88,9 @@ export default function MenuInfoAccordion(props: Props) {
         return acc
       }, [])
       setMenu(newMenuInfo)
-      setSuccessMessage(['저장 성공'])
+      showToast('저장 성공', 'success')
     } catch (error) {
-      setErrorMessage(['저장 실패'])
+      showToast('저장 실패', 'error')
     }
   }
   return (
@@ -213,8 +213,6 @@ export default function MenuInfoAccordion(props: Props) {
           </button>
         </div>
       </div>
-      {successMessage.length !== 0 && <SuccessToast message={successMessage} />}
-      {errorMessage.length !== 0 && <ErrorToast message={errorMessage} />}
     </>
   )
 }

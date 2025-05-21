@@ -8,12 +8,14 @@ interface Props {
   children: ReactNode
 }
 
-export default function CreateProductModal({ isOpen, onClose, onSave, children }: Props) {
+export default function CreateInquiryModal({ isOpen, onClose, onSave, children }: Props) {
   if (!isOpen) return null
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="flex flex-col w-full h-[500px] bg-white rounded-lg shadow-lg max-w-2xl mx-4 p-6">
-        <div className="flex flex-col flex-1 w-full overflow-y-auto custom-scroll">{children}</div>
+        <div className="flex flex-col flex-1 w-full items-center overflow-y-auto custom-scroll">
+          {children}
+        </div>
         <div className="flex justify-center mt-4 gap-4">
           <button className="border border-borderDefault px-3 py-1 rounded-lg" onClick={onClose}>
             취소

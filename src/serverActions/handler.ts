@@ -53,7 +53,9 @@ export async function updateUserInfo(body: updateBody) {
   }
 }
 
-export async function getUsers(query: string = ''): Promise<userResponse[] | undefined> {
+export async function getUsers(
+  query: string = '',
+): Promise<{ rows: userResponse[]; total: number } | undefined> {
   try {
     const result = await authFetch(`${API_URL}/api/users/getAll?${query}`, {
       method: 'GET',
@@ -61,10 +63,8 @@ export async function getUsers(query: string = ''): Promise<userResponse[] | und
         'Content-Type': 'application/json',
       },
     })
-    const {
-      data: { rows },
-    }: { data: { rows: [] } } = await result.json()
-    return rows
+    const { data } = await result.json()
+    return data
   } catch (error) {
     return
   }
