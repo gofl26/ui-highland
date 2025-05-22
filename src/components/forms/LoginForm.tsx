@@ -28,8 +28,8 @@ export default function LoginForm() {
     event.preventDefault()
     const formData = new FormData(event.target as HTMLFormElement)
     const result = await signInWithCredentials(formData)
-    if (result?.error) showToast(result.error.message, 'error')
-    else router.push('/home')
+    if (result?.error) return showToast(result.error.message, 'error')
+    window.location.href = '/home'
   }
 
   return (

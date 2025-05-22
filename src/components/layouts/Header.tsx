@@ -14,7 +14,6 @@ interface props {
   user: userVerify | undefined
 }
 export default async function HeaderLayout({ token, apiUrl, siteInfo, menuInfo, user }: props) {
-
   return (
     <header className="flex flex-col w-full bg-bgHeader backdrop-blur-sm">
       <AuthHeader token={token} />

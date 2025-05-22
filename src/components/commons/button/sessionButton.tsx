@@ -1,18 +1,23 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { signOutWithForm } from '@/serverActions/auth'
-
 export default function SessionButtons({ token }: { token: any }) {
   const { data: session } = useSession()
-  const [loginState, setLoginState] = useState(token)
   const router = useRouter()
+  const pathname = usePathname()
+
+  const [loginState, setLoginState] = useState(token)
   const handleClickLogout = async () => {
     if (!session?.sessionId) return
     const result = await signOutWithForm({ sessionId: session.sessionId })
-    if (result) setLoginState(undefined)
+    if (result) {
+      console.info('🚀 pathname:', pathname)
+      setLoginState(undefined)
+      window.location.href = pathname
+    }
   }
   if (loginState) {
     return <button onClick={handleClickLogout}>로그아웃</button>
