@@ -103,8 +103,7 @@ export default function SignupForm() {
       if (result?.error) {
         return showToast('회원가입 실패', 'error')
       }
-      router.refresh()
-      // router.push('/home')
+      window.location.href = '/home'
     } catch (error: any) {
       showToast(error.message, 'error')
     }

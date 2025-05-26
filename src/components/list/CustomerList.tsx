@@ -9,23 +9,24 @@ import { createInquiry, getInquiry } from '@/serverActions/inquiries'
 import CreateInquiryModal from '@/components/modals/CreateInquiryModal'
 import InquiryForm from '@/components/forms/InquiryForm'
 import { useToast } from '@/components/commons/toast/ToastProvider'
-import { atomInquiryInfo } from '@/stores/atoms/inquiryAtom'
+import { atomUserInfo, atomInquiryInfo } from '@/stores/atoms'
 import type { faqResponse } from '@/types/faq'
 import type { inquiryResponse, inquiryForm } from '@/types/inquiry'
 import { productResponse } from '@/types/product'
+import { Lock } from 'lucide-react'
 
 type Row = {
   answerAt: string
   inquiryCategory: string
   inquiryTitle: string
-  userId: string
+  userName: string
   createdAt: string
 }
 const columns: { key: keyof Row; label: string; width: string }[] = [
   { key: 'answerAt', label: '답변상태', width: '' },
   { key: 'inquiryCategory', label: '유형', width: '' },
   { key: 'inquiryTitle', label: '제목/상품', width: 'w-full' },
-  { key: 'userId', label: '작성자', width: '' },
+  { key: 'userName', label: '작성자', width: '' },
   { key: 'createdAt', label: '등록일', width: '' },
 ]
 
@@ -47,6 +48,7 @@ export default function CustomerList({ faqInfo, inquiryInfo, productInfo, token 
   const [openCreateInquiryModal, setOpenCreateInquiryModal] = useState(false)
 
   const inquiryForm = useAtomValue<inquiryForm>(atomInquiryInfo)
+  const userInfo = useAtomValue(atomUserInfo)
   const resetForm = useResetAtom(atomInquiryInfo)
   const pathname = usePathname()
   const router = useRouter()
@@ -57,6 +59,7 @@ export default function CustomerList({ faqInfo, inquiryInfo, productInfo, token 
       return showToast('상품과 문의를 작성해주세요.', 'error')
     const result = await createInquiry(inquiryForm)
     if (!result) return showToast('문의 등록에 실패했습니다.', 'error')
+    else showToast('등록되었습니다.', 'success')
     const inquiryResult = await getInquiry()
     if (!inquiryResult) return showToast('문의 조회에 실패했습니다.', 'error')
     const { rows, total } = inquiryResult
@@ -64,15 +67,16 @@ export default function CustomerList({ faqInfo, inquiryInfo, productInfo, token 
     resetForm()
     setOpenCreateInquiryModal(false)
   }
-  const formatCellValue = (key: keyof Row, value: string | boolean) => {
-    if (key === 'userId' && typeof value === 'string') {
-      const chars = [...value]
-      const half = Math.floor(chars.length / 2)
-      const masked = '*'.repeat(half)
-      return chars.slice(half).join('') + masked
+  const formatCellValue = (key: keyof Row, value: string | boolean, isPublic = true) => {
+    if (key === 'userName' && typeof value === 'string') {
+      const chars = Array.from(value)
+      if (chars.length === 1) return value
+      if (chars.length === 2) return `${chars[0]}*`
+      return `${chars[0]}${'*'.repeat(chars.length - 2)}${chars[chars.length - 1]}`
     }
     if (key === 'answerAt') return value ? '답변완료' : '미답변'
     if (key === 'createdAt' && typeof value !== 'boolean') return moment(value).format('YYYY-MM-DD')
+    if (key === 'inquiryTitle' && !isPublic) return '비밀글 입니다.'
     return value
   }
   useEffect(() => {
@@ -166,11 +170,18 @@ export default function CustomerList({ faqInfo, inquiryInfo, productInfo, token 
               <Fragment key={idx}>
                 <tr
                   className="cursor-pointer even:bg-gray-50 hover:bg-gray-100"
-                  onClick={() => setOpenInquiryIndex((prev) => (prev === idx ? null : idx))}
+                  onClick={() => {
+                    if (userInfo.role !== 'admin' && !row.isPublic && row.userId !== userInfo.id)
+                      return
+                    setOpenInquiryIndex((prev) => (prev === idx ? null : idx))
+                  }}
                 >
                   {columns.map(({ key, width }: any) => (
-                    <td key={key} className={`border px-4 py-2 truncate ${width}`}>
-                      {formatCellValue(key, row[key]!)}
+                    <td key={key} className={`border  px-4 py-2 truncate ${width}`}>
+                      <div className="flex items-center gap-1">
+                        {key === 'inquiryTitle' && !row.isPublic && <Lock size="14" />}
+                        {formatCellValue(key, row[key]!, row.isPublic)}
+                      </div>
                     </td>
                   ))}
                 </tr>
@@ -179,17 +190,16 @@ export default function CustomerList({ faqInfo, inquiryInfo, productInfo, token 
                 <tr className="transition-all">
                   <td
                     colSpan={columns.length}
-                    className={`p-0 border-t-0 overflow-hidden transition-all duration-300 ${
-                      openInquiryIndex === idx ? 'max-h-96 py-4 px-4' : 'max-h-0 py-0 px-0'
+                    className={`border-t-0 overflow-hidden transition-all duration-300 ${
+                      openInquiryIndex === idx ? 'max-h-96 py-1 px-3' : 'max-h-0 py-0 px-0'
                     }`}
                   >
                     <div className={`transition-all duration-300 ease-in-out`}>
                       {openInquiryIndex === idx && (
-                        <div className="bg-gray-100 rounded p-4 text-sm">
-                          <strong>상세 내용:</strong>
-                          <div className="mt-2 text-gray-700">
+                        <div className="rounded text-sm">
+                          <div className="mt-2">
                             {/* 커스텀 상세 내용 */}
-                            {JSON.stringify(row, null, 2)}
+                            {row?.inquiryTitle}
                           </div>
                         </div>
                       )}

@@ -7,7 +7,6 @@ interface props {
 }
 
 export default async function AuthHeader({ token }: props) {
-
   return (
     <div className="flex justify-end gap-4 px-8 py-2 bg-[#A5948A] text-white">
       <SessionButtons token={token} />
