@@ -11,6 +11,7 @@ export const manageSideBarMenu = [
 ]
 
 export const userSideBarMenu = [
+  { path: '/shopping/cart', name: '장바구니' },
   { path: '/shopping/orderList', name: '주문 목록 / 배송 조회' },
   { path: '/myPost/inquiry', name: '내가 쓴 문의' },
   { path: '/myPost/review', name: '후기쓰기' },

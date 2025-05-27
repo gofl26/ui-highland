@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, Fragment } from 'react'
 import moment from 'moment'
 import { getInquiry } from '@/serverActions/inquiries'
 import { useToast } from '@/components/commons/toast/ToastProvider'
@@ -76,9 +76,8 @@ export default function InquiryList({ inquiryInfo }: props) {
         </thead>
         <tbody>
           {inquiryData.map((row: any, idx: number) => (
-            <>
+            <Fragment key={idx}>
               <tr
-                key={idx}
                 className="cursor-pointer even:bg-gray-50 hover:bg-gray-100"
                 onClick={() => setOpenInquiryIndex((prev) => (prev === idx ? null : idx))}
               >
@@ -99,18 +98,17 @@ export default function InquiryList({ inquiryInfo }: props) {
                 >
                   <div className={`transition-all duration-300 ease-in-out`}>
                     {openInquiryIndex === idx && (
-                      <div className="bg-gray-100 rounded p-4 text-sm">
-                        <strong>상세 내용:</strong>
-                        <div className="mt-2 text-gray-700">
+                      <div className="rounded text-sm">
+                        <div className="mt-2">
                           {/* 커스텀 상세 내용 */}
-                          {JSON.stringify(row, null, 2)}
+                          {row?.inquiryTitle}
                         </div>
                       </div>
                     )}
                   </div>
                 </td>
               </tr>
-            </>
+            </Fragment>
           ))}
         </tbody>
       </table>

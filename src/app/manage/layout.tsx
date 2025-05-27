@@ -19,7 +19,7 @@ export default async function ManageLayout({ children }: { children: React.React
   site = await getSite()
   user = await getUserInfo()
   return (
-    <div className="flex flex-col min-w-[1340px] overflow-hidden">
+    <div className="flex flex-col min-w-[1340px] h-screen overflow-hidden">
       <Header token={token} apiUrl={API_URL} siteInfo={site} menuInfo={menu} user={user} />
       <div className="flex flex-1 overflow-hidden">
         {/* 고정 사이드바 */}

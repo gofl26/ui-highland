@@ -6,6 +6,7 @@ import { useToast } from '@/components/commons/toast/ToastProvider'
 import CreateProductModal from '@/components/modals/CreateProductModal'
 import { inquiryCategory } from '@/stores/inquiry'
 import { faqResponse, faqForm } from '@/types/faq'
+import Input from '../commons/input/defaultInput'
 
 type Row = {
   faqQuestion: string
@@ -43,6 +44,12 @@ export default function FaqListGrid({ faqInfo }: props) {
   const formatCellValue = (key: keyof Row, value: string) => {
     if (key === 'createdAt') return moment(value).format('YYYY-MM-DD')
     return value
+  }
+  const handleChangQuestionInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = event.target
+    const newFaqForm = JSON.parse(JSON.stringify(faqForm))
+    newFaqForm[name] = value
+    setFaqForm(newFaqForm)
   }
   const handleChangeInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { value, name } = event.target
@@ -91,6 +98,7 @@ export default function FaqListGrid({ faqInfo }: props) {
       else {
         setOpenCreateFaqModal(false)
         setData((prev) => [...prev, result[0]])
+        setTotalNumber((prev) => prev + 1)
         showToast('저장 성공', 'success')
       }
     } catch (error) {
@@ -162,11 +170,11 @@ export default function FaqListGrid({ faqInfo }: props) {
                     질문
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
-                    <textarea
+                    <Input
                       value={faqForm?.faqQuestion}
                       className="w-full p-1"
                       name="faqQuestion"
-                      onChange={handleChangeInput}
+                      onChange={handleChangQuestionInput}
                     />
                   </div>
                 </div>
@@ -197,7 +205,7 @@ export default function FaqListGrid({ faqInfo }: props) {
                   <div className="flex w-4/5 items-center px-4 py-2">
                     <textarea
                       value={faqForm?.faqAnswer}
-                      className="w-full p-1"
+                      className="w-full rounded-lg border border-borderDefault p-2 pr-10 focus:outline-inputFocus"
                       name="faqAnswer"
                       onChange={handleChangeInput}
                     />
@@ -225,11 +233,11 @@ export default function FaqListGrid({ faqInfo }: props) {
                     질문
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
-                    <textarea
-                      value={faqForm.faqQuestion}
+                    <Input
+                      value={faqForm?.faqQuestion}
                       className="w-full p-1"
                       name="faqQuestion"
-                      onChange={handleChangeInput}
+                      onChange={handleChangQuestionInput}
                     />
                   </div>
                 </div>
@@ -259,7 +267,7 @@ export default function FaqListGrid({ faqInfo }: props) {
                   <div className="flex w-4/5 items-center px-4 py-2">
                     <textarea
                       value={faqForm?.faqAnswer}
-                      className="w-full p-1"
+                      className="w-full rounded-lg border border-borderDefault p-2 pr-10 focus:outline-inputFocus"
                       name="faqAnswer"
                       onChange={handleChangeInput}
                     />
