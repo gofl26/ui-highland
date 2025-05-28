@@ -6,7 +6,7 @@ export default async function OrderListPage() {
   return (
     <div className="flex flex-col w-full p-8 text-textDefault">
       <p className="text-lg font-semibold">장바구니</p>
-      <CartList className="w-full mt-20" />
+      {cartList && <CartList className="w-full mt-20" cartInfo={cartList} />}
     </div>
   )
 }

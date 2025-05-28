@@ -1,7 +1,9 @@
 export type inquiryResponse = {
   id: string
   userId: string
+  userName: string
   productId: string
+  productName: string
   inquiryCategory: string
   inquiryTitle: string
   inquiryDesc: string

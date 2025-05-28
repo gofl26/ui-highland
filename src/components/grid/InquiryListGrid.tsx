@@ -3,10 +3,11 @@ import { useState } from 'react'
 import { useToast } from '@/components/commons/toast/ToastProvider'
 import { getInquiry } from '@/serverActions/inquiries'
 import type { inquiryResponse, inquiryForm } from '@/types/inquiry'
+import moment from 'moment'
 
 type Row = {
-  userId: string
-  productId: string
+  userName: string
+  productName: string
   inquiryCategory: string
   inquiryTitle: string
   createdAt: string
@@ -27,8 +28,8 @@ export default function InquiryListGrid({ inquiryInfo }: props) {
   const { rows, total } = inquiryInfo
   const pageSize = 10
   const columns: { key: keyof Row; label: string }[] = [
-    { key: 'userId', label: '작성자' },
-    { key: 'productId', label: '상품' },
+    { key: 'userName', label: '작성자' },
+    { key: 'productName', label: '상품' },
     { key: 'inquiryCategory', label: '문의 카테고리' },
     { key: 'inquiryTitle', label: '문의 제목' },
     { key: 'createdAt', label: '문의 작성일' },
@@ -68,6 +69,10 @@ export default function InquiryListGrid({ inquiryInfo }: props) {
     } catch (error) {
       showToast('조회 실패', 'error')
     }
+  }
+  const formatCellValue = (key: keyof Row, value: string | boolean) => {
+    if (key === 'createdAt' && typeof value !== 'boolean') return moment(value).format('YYYY-MM-DD')
+    return value
   }
   return (
     <div className="flex w-full mt-4">
@@ -126,7 +131,7 @@ export default function InquiryListGrid({ inquiryInfo }: props) {
               >
                 {columns.map(({ key }) => (
                   <td key={key} className="border px-4 py-2">
-                    {row[key]}
+                    {formatCellValue(key, row[key]!)}
                   </td>
                 ))}
               </tr>

@@ -6,7 +6,7 @@ const API_URL = process.env.API_URL || ''
 
 export async function getCart(): Promise<cartResponse[] | undefined> {
   try {
-    const result = await fetch(`${API_URL}/api/carts/get`, {
+    const result = await authFetch(`${API_URL}/api/carts/get`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
