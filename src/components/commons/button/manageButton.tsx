@@ -20,7 +20,7 @@ export default function ManageButton({ userInfo }: Props) {
   }
   const handleClickCart = () => {
     if (!userInfo) router.push('/login')
-    else if (userInfo.role === 'customer') router.push('/user/cart')
+    else if (userInfo.role === 'customer') router.push('/user/shopping/cart')
   }
   useEffect(() => {
     if (userInfo) setUser(userInfo)

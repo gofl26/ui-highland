@@ -114,68 +114,70 @@ export default function UserListGrid({ users }: Props) {
     <div className="flex w-full mt-4">
       <div className="w-full">
         {/* Search Bar */}
-        <div className="flex gap-2 mb-4">
-          <select
-            className="border border-borderDefault rounded-lg px-2 py-1 focus:outline-inputFocus"
-            value={filterColumn}
-            onChange={handleChangeSelect}
-          >
-            {columns.map(({ key, label }) => (
-              <option key={key} value={key}>
-                {label}
-              </option>
-            ))}
-          </select>
-          <input
-            type="text"
-            className="border rounded-lg border-borderDefault p-2 pr-10 focus:outline-inputFocus"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            placeholder="검색"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleClickSearch()
-              }
-            }}
-          />
-          <button
-            className="bg-bgPrimary text-textPrimary px-4 py-2 rounded-lg"
-            onClick={handleClickSearch}
-          >
-            검색
-          </button>
-        </div>
-
-        {selectedRowIndex !== null && (
-          <div className="flex justify-end mb-2 gap-2">
-            {editMode ? (
-              <button
-                className="bg-green-600 text-white px-3 py-1 rounded"
-                onClick={() => handleClickSaveUser()}
-              >
-                저장
-              </button>
-            ) : (
-              <button
-                className="bg-blue-600 text-white px-3 py-1 rounded"
-                onClick={() => {
-                  setEditMode(true)
-                  console.info({ ...data[selectedRowIndex] })
-                  setEditableRow({ ...data[selectedRowIndex] })
-                }}
-              >
-                수정
-              </button>
-            )}
-
-            <button
-              className="bg-red-600 text-white px-3 py-1 rounded"
-              onClick={handleClickDeleteUser}
+        <div className="flex justify-between mb-4">
+          <div className="flex gap-4">
+            <select
+              className="border border-borderDefault rounded-lg px-2 py-1 focus:outline-inputFocus"
+              value={filterColumn}
+              onChange={handleChangeSelect}
             >
-              삭제
+              {columns.map(({ key, label }) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              className="border rounded-lg border-borderDefault p-2 pr-10 focus:outline-inputFocus"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              placeholder="검색"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleClickSearch()
+                }
+              }}
+            />
+            <button
+              className="bg-bgPrimary text-textPrimary px-4 py-2 rounded-lg"
+              onClick={handleClickSearch}
+            >
+              검색
             </button>
           </div>
-        )}
+          {selectedRowIndex !== null && (
+            <div className="flex justify-end gap-2">
+              {editMode ? (
+                <button
+                  className="bg-green-600 text-white px-3 py-1 rounded"
+                  onClick={() => handleClickSaveUser()}
+                >
+                  저장
+                </button>
+              ) : (
+                <button
+                  className="bg-blue-600 text-white px-3 py-1 rounded"
+                  onClick={() => {
+                    setEditMode(true)
+                    console.info({ ...data[selectedRowIndex] })
+                    setEditableRow({ ...data[selectedRowIndex] })
+                  }}
+                >
+                  수정
+                </button>
+              )}
+
+              <button
+                className="bg-red-600 text-white px-3 py-1 rounded"
+                onClick={handleClickDeleteUser}
+              >
+                삭제
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Table */}
         <table className="min-w-full border-collapse border border-borderDefault text-sm">
           <thead>

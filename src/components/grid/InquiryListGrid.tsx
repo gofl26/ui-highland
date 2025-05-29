@@ -77,7 +77,7 @@ export default function InquiryListGrid({ inquiryInfo }: props) {
   return (
     <div className="flex w-full mt-4">
       <div className="w-full">
-        <div className="flex w-full justify-between items-center mb-4">
+        <div className="flex w-full h-10 justify-between items-center mb-4">
           <p className="text-sm">총 {totalNumber} 개</p>
           <div className="flex items-center gap-2">
             {selectedRowIndex !== null && (
