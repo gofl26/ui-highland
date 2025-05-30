@@ -1,6 +1,7 @@
 'use client'
-import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
+
 import { categoryResponse } from '@/types/category'
 
 interface Props {

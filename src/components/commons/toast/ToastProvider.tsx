@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, useEffect } from 'react'
+
 import ToastItem from './ToastItem'
 type Toast = {
   id: number
@@ -28,7 +29,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed top-40 right-4 space-y-2 z-50">
+      <div className="fixed right-4 top-40 z-50 space-y-2">
         {toasts.map(({ id, message, type }) => (
           <ToastItem key={id} message={message} type={type} />
         ))}

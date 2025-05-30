@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import { useState } from 'react'
+
 import { signOutWithForm } from '@/serverActions/auth'
 export default function SessionButtons({ token }: { token: any }) {
   const { data: session } = useSession()

@@ -25,7 +25,7 @@ export default function Checkbox({
         checked={checked}
         disabled={disabled}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-5 w-5 accent-textDefault rounded border border-borderPrimary cursor-pointer disabled:cursor-not-allowed"
+        className="size-5 cursor-pointer rounded border border-borderPrimary accent-textDefault disabled:cursor-not-allowed"
       />
     </div>
   )

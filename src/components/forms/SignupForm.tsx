@@ -1,13 +1,14 @@
 'use client'
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { signInWithCredentials } from '@/serverActions/auth'
-import { checkEmailDuplicate } from '@/serverActions/handler'
-import SignupAgreeForm from '@/components/forms/SignupAgreeForm'
+import { useState } from 'react'
+
 import Input from '@/components/commons/input/defaultInput'
 import { useToast } from '@/components/commons/toast/ToastProvider'
-import formatPhoneNumber from '@/utils/formatPhoneNumber'
+import SignupAgreeForm from '@/components/forms/SignupAgreeForm'
+import { signInWithCredentials } from '@/serverActions/auth'
+import { checkEmailDuplicate } from '@/serverActions/handler'
 import type { SignupForm } from '@/types/signup/index'
+import formatPhoneNumber from '@/utils/formatPhoneNumber'
 
 const initSignupForm: SignupForm = {
   email: '',
@@ -113,17 +114,17 @@ export default function SignupForm() {
       {!signupAgree ? (
         <SignupAgreeForm setSignupAgree={setSignupAgree} />
       ) : (
-        <div className="flex flex-col w-full justify-center items-center gap-4">
-          <form className="flex flex-col w-1/2">
+        <div className="flex w-full flex-col items-center justify-center gap-4">
+          <form className="flex w-1/2 flex-col">
             <div
-              className={`flex w-full h-20 border rounded-t-lg ${validEmail === false ? 'border-textFail' : 'mb-[-1px] border-borderDefault'}`}
+              className={`flex h-20 w-full rounded-t-lg border ${validEmail === false ? 'border-textFail' : '-mb-px border-borderDefault'}`}
             >
-              <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+              <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                 이메일
                 <p className="text-textFail">*</p>
               </div>
-              <div className="flex w-4/5 justify-between items-center px-4 py-2 gap-4">
-                <div className="flex flex-col flex-1">
+              <div className="flex w-4/5 items-center justify-between gap-4 px-4 py-2">
+                <div className="flex flex-1 flex-col">
                   <Input
                     value={signupForm.email}
                     name="email"
@@ -132,7 +133,7 @@ export default function SignupForm() {
                   />
                 </div>
                 <button
-                  className="w-20 h-10 rounded-lg bg-bgPrimary text-textPrimary"
+                  className="h-10 w-20 rounded-lg bg-bgPrimary text-textPrimary"
                   type="button"
                   onClick={handleClickDuplicate}
                 >
@@ -141,12 +142,12 @@ export default function SignupForm() {
               </div>
             </div>
             <div
-              className={`flex w-full h-20 border ${validEmail === false ? 'border-t-0' : ''} ${availablePassword === false ? 'border-textFail' : 'mb-[-1px] border-borderDefault'}`}
+              className={`flex h-20 w-full border ${validEmail === false ? 'border-t-0' : ''} ${availablePassword === false ? 'border-textFail' : '-mb-px border-borderDefault'}`}
             >
-              <div className="flex w-1/5 justify-center items-center bg-bgDefault">
+              <div className="flex w-1/5 items-center justify-center bg-bgDefault">
                 비밀번호<p className="text-textFail">*</p>
               </div>
-              <div className="flex flex-col w-4/5 justify-center px-4 py-2 gap-2">
+              <div className="flex w-4/5 flex-col justify-center gap-2 px-4 py-2">
                 <Input
                   value={signupForm.password}
                   type="password"
@@ -160,12 +161,12 @@ export default function SignupForm() {
               </div>
             </div>
             <div
-              className={`flex w-full h-20 border rounded-b-lg ${availablePassword === false ? 'border-t-0' : ''} ${availableUserName === false ? 'border-textFail' : 'border-borderDefault'}`}
+              className={`flex h-20 w-full rounded-b-lg border ${availablePassword === false ? 'border-t-0' : ''} ${availableUserName === false ? 'border-textFail' : 'border-borderDefault'}`}
             >
-              <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+              <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                 이름<p className="text-textFail">*</p>
               </div>
-              <div className="flex w-4/5 justify-center items-center px-4 py-2">
+              <div className="flex w-4/5 items-center justify-center px-4 py-2">
                 <Input
                   value={signupForm.userName}
                   name="userName"
@@ -175,12 +176,12 @@ export default function SignupForm() {
               </div>
             </div>
           </form>
-          <form className="flex flex-col w-1/2 border rounded-lg border-borderDefault divide-y divide-borderDefault">
-            <div className="flex w-full h-20">
-              <div className="flex w-1/5 justify-center items-center rounded-ss-lg bg-bgDefault">
+          <form className="flex w-1/2 flex-col divide-y divide-borderDefault rounded-lg border border-borderDefault">
+            <div className="flex h-20 w-full">
+              <div className="flex w-1/5 items-center justify-center rounded-ss-lg bg-bgDefault">
                 전화번호
               </div>
-              <div className="flex w-4/5 justify-center items-center px-4 py-2">
+              <div className="flex w-4/5 items-center justify-center px-4 py-2">
                 <Input
                   value={signupForm.phoneNumber}
                   name="phoneNumber"
@@ -188,20 +189,20 @@ export default function SignupForm() {
                 />
               </div>
             </div>
-            <div className="flex w-full h-20">
-              <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+            <div className="flex h-20 w-full">
+              <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                 성별
               </div>
-              <div className="flex w-4/5 items-center px-4 py-2 gap-4">
+              <div className="flex w-4/5 items-center gap-4 px-4 py-2">
                 <button
-                  className={`w-20 px-4 py-2 border border-borderDefault rounded-full ${signupForm.gender === 'male' && 'bg-bgPrimary text-textPrimary'}`}
+                  className={`w-20 rounded-full border border-borderDefault px-4 py-2 ${signupForm.gender === 'male' && 'bg-bgPrimary text-textPrimary'}`}
                   type="button"
                   onClick={() => handleClickGender('male')}
                 >
                   남자
                 </button>
                 <button
-                  className={`w-20 px-4 py-2 border border-borderDefault rounded-full ${signupForm.gender === 'female' && 'bg-bgPrimary text-textPrimary'}`}
+                  className={`w-20 rounded-full border border-borderDefault px-4 py-2 ${signupForm.gender === 'female' && 'bg-bgPrimary text-textPrimary'}`}
                   type="button"
                   onClick={() => handleClickGender('female')}
                 >
@@ -210,15 +211,15 @@ export default function SignupForm() {
               </div>
             </div>
           </form>
-          <div className="flex justify-center items-center gap-4">
+          <div className="flex items-center justify-center gap-4">
             <button
-              className="w-40 px-4 py-2 border rounded-lg border-borderDefault"
+              className="w-40 rounded-lg border border-borderDefault px-4 py-2"
               onClick={() => router.push('/home')}
             >
               취소
             </button>
             <button
-              className="w-40 px-4 py-2 rounded-lg bg-bgPrimary text-textPrimary"
+              className="w-40 rounded-lg bg-bgPrimary px-4 py-2 text-textPrimary"
               onClick={handleClickSignup}
             >
               가입

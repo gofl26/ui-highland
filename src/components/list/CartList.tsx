@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+
 import { cartResponse } from '@/types/cart'
 
 interface props {
@@ -23,12 +24,12 @@ export default function CartList({ className, cartInfo: rows }: props) {
   }
   return (
     <div className={className}>
-      <div className="flex flex-col w-full items-center">
+      <div className="flex w-full flex-col items-center">
         <table className="min-w-full border-collapse border border-borderDefault text-sm">
           <thead>
             <tr className="bg-bgHeader">
               {columns.map(({ key, label, width }) => (
-                <th key={key} className={`border px-4 py-2 truncate ${width}`}>
+                <th key={key} className={`truncate border px-4 py-2 ${width}`}>
                   {label}
                 </th>
               ))}
@@ -42,7 +43,7 @@ export default function CartList({ className, cartInfo: rows }: props) {
                 onClick={() => {}}
               >
                 {columns.map(({ key, width }) => (
-                  <td key={key} className={`border px-4 py-2 truncate ${width}`}>
+                  <td key={key} className={`truncate border px-4 py-2 ${width}`}>
                     {formatCellValue(key, row[key]!)}
                   </td>
                 ))}

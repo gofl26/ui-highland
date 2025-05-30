@@ -1,12 +1,13 @@
 'use client'
-import { useEffect, useState } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
 import moment from 'moment'
-import { noticeResponse } from '@/types/notice'
-import TiptapViewer from '@/lib/tiptapViewer/TiptapVIewer'
-import NoticeModal from '@/components/modals/NoticeModal'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+
 import { useToast } from '@/components/commons/toast/ToastProvider'
+import NoticeModal from '@/components/modals/NoticeModal'
+import TiptapViewer from '@/lib/tiptapViewer/TiptapVIewer'
 import { getNotice } from '@/serverActions/notice'
+import { noticeResponse } from '@/types/notice'
 
 type Row = {
   noticeCategory: string
@@ -72,30 +73,30 @@ export default function NoticeList({ noticeInfo }: props) {
     setTotalNumber(total)
   }, [pathname, total])
   return (
-    <div className="flex flex-col items-center w-full px-20">
-      <p className="flex justify-center mt-12 text-3xl font-semibold">커뮤니티</p>
-      <div className="flex justify-center gap-6 mt-12">
+    <div className="flex w-full flex-col items-center px-20">
+      <p className="mt-12 flex justify-center text-3xl font-semibold">커뮤니티</p>
+      <div className="mt-12 flex justify-center gap-6">
         <button
-          className={`flex justify-center items-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/notice' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
+          className={`flex w-28 items-center justify-center rounded-full px-3 py-2 ${currentPage === '/community/notice' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
           onClick={() => router.push('/community/notice')}
         >
           공지사항
         </button>
         <button
-          className={`flex justify-center items-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/customer' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
+          className={`flex w-28 items-center justify-center rounded-full px-3 py-2 ${currentPage === '/community/customer' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
           onClick={() => router.push('/community/customer')}
         >
           고객센터
         </button>
         <button
-          className={`flex justify-center items-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/review' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
+          className={`flex w-28 items-center justify-center rounded-full px-3 py-2 ${currentPage === '/community/review' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
           onClick={() => router.push('/community/review')}
         >
           상품후기
         </button>
       </div>
-      <div className="w-full max-w-4xl mt-12">
-        <div className="flex w-full items-center mb-4">
+      <div className="mt-12 w-full max-w-4xl">
+        <div className="mb-4 flex w-full items-center">
           <p className="text-sm">총 {totalNumber} 개</p>
         </div>
         {/* Table */}
@@ -103,7 +104,7 @@ export default function NoticeList({ noticeInfo }: props) {
           <thead>
             <tr className="bg-bgHeader">
               {columns.map(({ key, label, width }) => (
-                <th key={key} className={`border px-4 py-2 truncate ${width}`}>
+                <th key={key} className={`truncate border px-4 py-2 ${width}`}>
                   {label}
                 </th>
               ))}
@@ -121,7 +122,7 @@ export default function NoticeList({ noticeInfo }: props) {
                 }}
               >
                 {columns.map(({ key, width }) => (
-                  <td key={key} className={`border px-4 py-2 truncate ${width}`}>
+                  <td key={key} className={`truncate border px-4 py-2 ${width}`}>
                     {formatCellValue(key, row[key]!)}
                   </td>
                 ))}
@@ -130,11 +131,11 @@ export default function NoticeList({ noticeInfo }: props) {
           </tbody>
         </table>
         {/* Pagination */}
-        <div className="flex justify-end items-center gap-2 mt-4">
+        <div className="mt-4 flex items-center justify-end gap-2">
           <button
             onClick={handleClickPreBtn}
             disabled={page === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="rounded border px-3 py-1 disabled:opacity-50"
           >
             이전
           </button>
@@ -144,7 +145,7 @@ export default function NoticeList({ noticeInfo }: props) {
           <button
             onClick={handleClickNextBtn}
             disabled={page >= Math.ceil(totalNumber / pageSize)}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="rounded border px-3 py-1 disabled:opacity-50"
           >
             다음
           </button>

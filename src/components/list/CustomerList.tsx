@@ -1,19 +1,20 @@
 'use client'
-import { useEffect, useState, Fragment } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
-import moment from 'moment'
-import type { Session } from 'next-auth'
 import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
-import { createInquiry, getInquiry } from '@/serverActions/inquiries'
-import CreateInquiryModal from '@/components/modals/CreateInquiryModal'
-import InquiryForm from '@/components/forms/InquiryForm'
+import { Lock } from 'lucide-react'
+import moment from 'moment'
+import { usePathname, useRouter } from 'next/navigation'
+import type { Session } from 'next-auth'
+import { useEffect, useState, Fragment } from 'react'
+
 import { useToast } from '@/components/commons/toast/ToastProvider'
+import InquiryForm from '@/components/forms/InquiryForm'
+import CreateInquiryModal from '@/components/modals/CreateInquiryModal'
+import { createInquiry, getInquiry } from '@/serverActions/inquiries'
 import { atomUserInfo, atomInquiryInfo } from '@/stores/atoms'
 import type { faqResponse } from '@/types/faq'
 import type { inquiryResponse, inquiryForm } from '@/types/inquiry'
 import { productResponse } from '@/types/product'
-import { Lock } from 'lucide-react'
 
 type Row = {
   answerAt: string
@@ -83,37 +84,37 @@ export default function CustomerList({ faqInfo, inquiryInfo, productInfo, token 
     setCurrentPage(pathname)
   }, [pathname])
   return (
-    <div className="flex flex-col items-center w-full px-20">
-      <p className="flex justify-center mt-12 text-3xl font-semibold">커뮤니티</p>
-      <div className="flex justify-center gap-6 mt-12">
+    <div className="flex w-full flex-col items-center px-20">
+      <p className="mt-12 flex justify-center text-3xl font-semibold">커뮤니티</p>
+      <div className="mt-12 flex justify-center gap-6">
         <button
-          className={`flex justify-center items-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/notice' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
+          className={`flex w-28 items-center justify-center rounded-full px-3 py-2 ${currentPage === '/community/notice' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
           onClick={() => router.push('/community/notice')}
         >
           공지사항
         </button>
         <button
-          className={`flex justify-center items-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/customer' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
+          className={`flex w-28 items-center justify-center rounded-full px-3 py-2 ${currentPage === '/community/customer' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
           onClick={() => router.push('/community/customer')}
         >
           고객센터
         </button>
         <button
-          className={`flex justify-center items-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/review' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
+          className={`flex w-28 items-center justify-center rounded-full px-3 py-2 ${currentPage === '/community/review' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
           onClick={() => router.push('/community/review')}
         >
           상품후기
         </button>
       </div>
-      <div className="flex flex-col w-full max-w-4xl mt-12">
+      <div className="mt-12 flex w-full max-w-4xl flex-col">
         {/* 자주묻는 질문 */}
-        <p className="font-semibold border-b border-borderPrimary">BEST 자주묻는 질문</p>
+        <p className="border-b border-borderPrimary font-semibold">BEST 자주묻는 질문</p>
         <div className="mt-4 divide-y">
           {faqData.map((item, index) => (
             <div key={index}>
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full text-left px-4 py-3 even:bg-gray-50 hover:bg-gray-100 transition-colors"
+                className="w-full px-4 py-3 text-left transition-colors even:bg-gray-50 hover:bg-gray-100"
               >
                 <div className="flex gap-2">
                   <span className="font-semibold">Q</span>
@@ -126,19 +127,19 @@ export default function CustomerList({ faqInfo, inquiryInfo, productInfo, token 
                   openIndex === index ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
                 }`}
               >
-                <div className="px-4 py-3 bg-gray-100 text-sm">{item.faqAnswer}</div>
+                <div className="bg-gray-100 px-4 py-3 text-sm">{item.faqAnswer}</div>
               </div>
             </div>
           ))}
         </div>
         {/* 묻고 답하기 */}
         <div
-          className={`flex w-full items-center mt-4 py-1 border-b border-borderPrimary ${token ? 'justify-between' : ''}`}
+          className={`mt-4 flex w-full items-center border-b border-borderPrimary py-1 ${token ? 'justify-between' : ''}`}
         >
           <p className="font-semibold">묻고 답하기</p>
           {token && (
             <button
-              className="px-3 py-2 bg-bgPrimary text-textPrimary rounded-lg"
+              className="rounded-lg bg-bgPrimary px-3 py-2 text-textPrimary"
               onClick={() => setOpenCreateInquiryModal(true)}
             >
               작성하기
@@ -152,14 +153,14 @@ export default function CustomerList({ faqInfo, inquiryInfo, productInfo, token 
             onSave={handleClickSaveInquiry}
           >
             <p className="text-xl font-semibold">문의 글 작성</p>
-            <InquiryForm className="w-full mt-4" products={productRows} />
+            <InquiryForm className="mt-4 w-full" products={productRows} />
           </CreateInquiryModal>
         )}
-        <table className="min-w-full mt-4 border-collapse border border-borderDefault text-sm">
+        <table className="mt-4 min-w-full border-collapse border border-borderDefault text-sm">
           <thead>
             <tr className="bg-bgHeader">
               {columns.map(({ key, label, width }) => (
-                <th key={key} className={`border px-4 py-2 truncate ${width}`}>
+                <th key={key} className={`truncate border px-4 py-2 ${width}`}>
                   {label}
                 </th>
               ))}
@@ -177,7 +178,7 @@ export default function CustomerList({ faqInfo, inquiryInfo, productInfo, token 
                   }}
                 >
                   {columns.map(({ key, width }: any) => (
-                    <td key={key} className={`border  px-4 py-2 truncate ${width}`}>
+                    <td key={key} className={`truncate  border px-4 py-2 ${width}`}>
                       <div className="flex items-center gap-1">
                         {key === 'inquiryTitle' && !row.isPublic && <Lock size="14" />}
                         {formatCellValue(key, row[key]!, row.isPublic)}
@@ -190,8 +191,8 @@ export default function CustomerList({ faqInfo, inquiryInfo, productInfo, token 
                 <tr className="transition-all">
                   <td
                     colSpan={columns.length}
-                    className={`border-t-0 overflow-hidden transition-all duration-300 ${
-                      openInquiryIndex === idx ? 'max-h-96 py-1 px-3' : 'max-h-0 py-0 px-0'
+                    className={`overflow-hidden border-t-0 transition-all duration-300 ${
+                      openInquiryIndex === idx ? 'max-h-96 px-3 py-1' : 'max-h-0 p-0'
                     }`}
                   >
                     <div className={`transition-all duration-300 ease-in-out`}>

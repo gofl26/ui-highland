@@ -1,13 +1,15 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
 import moment from 'moment'
+import { useState, useEffect, useRef } from 'react'
+
 import { useToast } from '@/components/commons/toast/ToastProvider'
-import { noticeResponse, noticeForm } from '@/types/notice'
-import { createNotice, getNotice, deleteNotice, updateNotice } from '@/serverActions/notice'
-import { uploadFile } from '@/serverActions/handler'
 import CreateNoticeModal from '@/components/modals/CreateNoticeModal'
-import Input from '../commons/input/defaultInput'
 import TiptapEditor, { TiptapEditorRef } from '@/lib/tiptapEditor/TiptapEditor'
+import { uploadFile } from '@/serverActions/handler'
+import { createNotice, getNotice, deleteNotice, updateNotice } from '@/serverActions/notice'
+import { noticeResponse, noticeForm } from '@/types/notice'
+
+import Input from '../commons/input/defaultInput'
 
 async function replaceBase64Images(html: string): Promise<string> {
   const parser = new DOMParser()
@@ -163,21 +165,21 @@ export default function FaqListGrid({ noticeInfo }: props) {
     }
   }
   return (
-    <div className="flex w-full mt-4">
+    <div className="mt-4 flex w-full">
       <div className="w-full">
-        <div className="flex w-full justify-between items-center mb-4">
+        <div className="mb-4 flex w-full items-center justify-between">
           <p className="text-sm">총 {totalNumber} 개</p>
           <div className="flex items-center gap-2">
             {selectedRowIndex !== null && (
               <div className="flex gap-2">
                 <button
-                  className="bg-red-600 text-textPrimary px-3 py-2 rounded-lg"
+                  className="rounded-lg bg-red-600 px-3 py-2 text-textPrimary"
                   onClick={handleClickDeleteNotice}
                 >
                   삭제
                 </button>
                 <button
-                  className="bg-bgHeader px-3 py-2 rounded-lg"
+                  className="rounded-lg bg-bgHeader px-3 py-2"
                   onClick={() => {
                     setNoticeForm(data[selectedRowIndex])
                     initialContentRef.current = data[selectedRowIndex].noticeDesc
@@ -194,11 +196,11 @@ export default function FaqListGrid({ noticeInfo }: props) {
               onSave={handleClickUpdateNotice}
             >
               <div className="flex w-full justify-center">
-                <p className="font-bold text-xl">공지사항 수정</p>
+                <p className="text-xl font-bold">공지사항 수정</p>
               </div>
-              <div className="flex flex-col w-full mt-4 border rounded-lg border-borderDefault">
-                <div className="flex w-full h-20 border-b border-borderDefault">
-                  <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+              <div className="mt-4 flex w-full flex-col rounded-lg border border-borderDefault">
+                <div className="flex h-20 w-full border-b border-borderDefault">
+                  <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                     제목
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
@@ -209,14 +211,14 @@ export default function FaqListGrid({ noticeInfo }: props) {
                     />
                   </div>
                 </div>
-                <div className="flex w-full h-20 border-b border-borderDefault">
-                  <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+                <div className="flex h-20 w-full border-b border-borderDefault">
+                  <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                     유형
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
                     <select
                       value={noticeForm.noticeCategory}
-                      className="w-full border border-borderDefault rounded-lg px-2 py-3 text-sm focus:outline-inputFocus"
+                      className="w-full rounded-lg border border-borderDefault px-2 py-3 text-sm focus:outline-inputFocus"
                       onChange={(e) => {
                         const newNoticeForm = JSON.parse(JSON.stringify(noticeForm))
                         newNoticeForm.noticeCategory = e.target.value
@@ -230,21 +232,21 @@ export default function FaqListGrid({ noticeInfo }: props) {
                   </div>
                 </div>
                 <div className="flex w-full border-b border-borderDefault">
-                  <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+                  <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                     본문
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
                     <TiptapEditor initialContent={initialContentRef.current} ref={editorRef} />
                   </div>
                 </div>
-                <div className="flex w-full h-20">
-                  <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+                <div className="flex h-20 w-full">
+                  <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                     하이라이트
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
                     <select
                       value={noticeForm.noticeActive ? '활성화' : '비활성화'}
-                      className="w-full border border-borderDefault rounded-lg px-2 py-3 text-sm focus:outline-inputFocus"
+                      className="w-full rounded-lg border border-borderDefault px-2 py-3 text-sm focus:outline-inputFocus"
                       onChange={(e) => {
                         const newNoticeForm = JSON.parse(JSON.stringify(noticeForm))
                         newNoticeForm.noticeActive = e.target.value === '활성화' ? true : false
@@ -259,7 +261,7 @@ export default function FaqListGrid({ noticeInfo }: props) {
               </div>
             </CreateNoticeModal>
             <button
-              className="bg-bgPrimary text-textPrimary px-3 py-2 rounded-lg"
+              className="rounded-lg bg-bgPrimary px-3 py-2 text-textPrimary"
               onClick={() => setOpenCreateNoticeModal(true)}
             >
               추가
@@ -270,11 +272,11 @@ export default function FaqListGrid({ noticeInfo }: props) {
               onSave={handleClickCreateNotice}
             >
               <div className="flex w-full justify-center">
-                <p className="font-bold text-xl">공지사항 등록</p>
+                <p className="text-xl font-bold">공지사항 등록</p>
               </div>
-              <div className="flex flex-col w-full mt-4 border rounded-lg border-borderDefault">
-                <div className="flex w-full h-20 border-b border-borderDefault">
-                  <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+              <div className="mt-4 flex w-full flex-col rounded-lg border border-borderDefault">
+                <div className="flex h-20 w-full border-b border-borderDefault">
+                  <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                     제목
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
@@ -285,14 +287,14 @@ export default function FaqListGrid({ noticeInfo }: props) {
                     />
                   </div>
                 </div>
-                <div className="flex w-full h-20 border-b border-borderDefault">
-                  <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+                <div className="flex h-20 w-full border-b border-borderDefault">
+                  <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                     유형
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
                     <select
                       value={noticeForm.noticeCategory}
-                      className="w-full border border-borderDefault rounded-lg px-2 py-3 text-sm focus:outline-inputFocus"
+                      className="w-full rounded-lg border border-borderDefault px-2 py-3 text-sm focus:outline-inputFocus"
                       onChange={(e) => {
                         const newNoticeForm = JSON.parse(JSON.stringify(noticeForm))
                         newNoticeForm.noticeCategory = e.target.value
@@ -306,21 +308,21 @@ export default function FaqListGrid({ noticeInfo }: props) {
                   </div>
                 </div>
                 <div className="flex w-full border-b border-borderDefault">
-                  <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+                  <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                     본문
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
                     <TiptapEditor ref={editorRef} />
                   </div>
                 </div>
-                <div className="flex w-full h-20">
-                  <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+                <div className="flex h-20 w-full">
+                  <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                     하이라이트
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
                     <select
                       value={noticeForm.noticeActive ? '활성화' : '비활성화'}
-                      className="w-full border border-borderDefault rounded-lg px-2 py-3 text-sm focus:outline-inputFocus"
+                      className="w-full rounded-lg border border-borderDefault px-2 py-3 text-sm focus:outline-inputFocus"
                       onChange={(e) => {
                         const newNoticeForm = JSON.parse(JSON.stringify(noticeForm))
                         newNoticeForm.noticeActive = e.target.value === '활성화' ? true : false
@@ -374,11 +376,11 @@ export default function FaqListGrid({ noticeInfo }: props) {
           </tbody>
         </table>
         {/* Pagination */}
-        <div className="flex justify-end items-center gap-2 mt-4">
+        <div className="mt-4 flex items-center justify-end gap-2">
           <button
             onClick={handleClickPreBtn}
             disabled={page === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="rounded border px-3 py-1 disabled:opacity-50"
           >
             이전
           </button>
@@ -388,7 +390,7 @@ export default function FaqListGrid({ noticeInfo }: props) {
           <button
             onClick={handleClickNextBtn}
             disabled={page >= Math.ceil(totalNumber / pageSize)}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="rounded border px-3 py-1 disabled:opacity-50"
           >
             다음
           </button>

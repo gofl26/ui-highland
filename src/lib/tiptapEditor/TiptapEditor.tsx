@@ -1,14 +1,15 @@
 'use client'
 
-import { Bold, Image as ImageIcon, AlignLeft, AlignCenter, AlignRight } from 'lucide-react'
+import { Color } from '@tiptap/extension-color'
+import { Image } from '@tiptap/extension-image'
+import { TextAlign } from '@tiptap/extension-text-align'
+import { TextStyle } from '@tiptap/extension-text-style'
 import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import TextStyle from '@tiptap/extension-text-style'
-import Color from '@tiptap/extension-color'
-import Image from '@tiptap/extension-image'
-import TextAlign from '@tiptap/extension-text-align'
-import { FontSize } from '@/lib/tiptapEditor/extensions/fontSize'
+import { StarterKit } from '@tiptap/starter-kit'
+import { Bold, Image as ImageIcon, AlignLeft, AlignCenter, AlignRight } from 'lucide-react'
 import { useEffect, useRef, useImperativeHandle, forwardRef } from 'react'
+
+import { FontSize } from '@/lib/tiptapEditor/extensions/fontSize'
 
 export interface TiptapEditorRef {
   getHTML: () => string
@@ -59,19 +60,19 @@ const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
     }
 
     return (
-      <div className="p-1 w-full border rounded-md bg-white">
+      <div className="w-full rounded-md border bg-white p-1">
         {/* 커스텀 툴바 */}
-        <div className="flex gap-2 flex-wrap mb-1 py-1 border-b">
+        <div className="mb-1 flex flex-wrap gap-2 border-b py-1">
           <button
             onClick={() => editor?.chain().focus().toggleBold().run()}
-            className="px-2 py-1 border rounded hover:bg-gray-100"
+            className="rounded border px-2 py-1 hover:bg-gray-100"
           >
             <Bold />
           </button>
 
           <select
             onChange={(e) => editor?.chain().focus().setFontSize(e.target.value).run()}
-            className="px-2 py-1 border rounded"
+            className="rounded border px-2 py-1"
           >
             <option value="16px">기본</option>
             <option value="20px">크게</option>
@@ -81,12 +82,12 @@ const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
           <input
             type="color"
             onChange={(e) => editor?.chain().focus().setColor(e.target.value).run()}
-            className="w-10 h-10 p-0"
+            className="size-10 p-0"
           />
 
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="px-2 py-1 border rounded hover:bg-gray-100"
+            className="rounded border px-2 py-1 hover:bg-gray-100"
           >
             <ImageIcon />
           </button>
@@ -101,21 +102,21 @@ const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
 
           <button
             onClick={() => editor?.chain().focus().setTextAlign('left').run()}
-            className="px-2 py-1 border rounded hover:bg-gray-100"
+            className="rounded border px-2 py-1 hover:bg-gray-100"
           >
             <AlignLeft />
           </button>
 
           <button
             onClick={() => editor?.chain().focus().setTextAlign('center').run()}
-            className="px-2 py-1 border rounded hover:bg-gray-100"
+            className="rounded border px-2 py-1 hover:bg-gray-100"
           >
             <AlignCenter />
           </button>
 
           <button
             onClick={() => editor?.chain().focus().setTextAlign('right').run()}
-            className="px-2 py-1 border rounded hover:bg-gray-100"
+            className="rounded border px-2 py-1 hover:bg-gray-100"
           >
             <AlignRight />
           </button>
@@ -123,7 +124,7 @@ const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
 
         <EditorContent
           editor={editor}
-          className="prose max-w-none min-h-[300px] focus:outline-none"
+          className="prose min-h-[300px] max-w-none focus:outline-none"
         />
       </div>
     )

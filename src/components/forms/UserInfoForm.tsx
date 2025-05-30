@@ -1,10 +1,11 @@
 'use client'
 import { useState } from 'react'
+
 import Input from '@/components/commons/input/defaultInput'
-import { updateUserInfo } from '@/serverActions/handler'
-import type { userVerify } from '@/types/users'
-import type { SignupForm } from '@/types/signup/index'
 import { useToast } from '@/components/commons/toast/ToastProvider'
+import { updateUserInfo } from '@/serverActions/handler'
+import type { SignupForm } from '@/types/signup/index'
+import type { userVerify } from '@/types/users'
 
 interface Props {
   userInfo: userVerify
@@ -52,23 +53,23 @@ export default function UserInfoForm(props: Props) {
     }
   }
   return (
-    <div className="flex flex-col w-full justify-center items-center">
-      <form className="flex flex-col w-full max-w-2xl border rounded-lg border-borderDefault">
-        <div className="flex w-full h-20 border-b border-borderDefault">
-          <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+    <div className="flex w-full flex-col items-center justify-center">
+      <form className="flex w-full max-w-2xl flex-col rounded-lg border border-borderDefault">
+        <div className="flex h-20 w-full border-b border-borderDefault">
+          <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
             이메일
           </div>
-          <div className="flex w-4/5 justify-between items-center px-4 py-2 gap-4">
-            <div className="flex flex-col w-full">
+          <div className="flex w-4/5 items-center justify-between gap-4 px-4 py-2">
+            <div className="flex w-full flex-col">
               <Input value={signupForm.email} name="email" disabled />
             </div>
           </div>
         </div>
-        <div className="flex w-full h-20">
-          <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+        <div className="flex h-20 w-full">
+          <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
             비밀번호<p className="text-textFail">*</p>
           </div>
-          <div className="flex flex-col w-4/5 justify-center px-4 py-2 gap-2">
+          <div className="flex w-4/5 flex-col justify-center gap-2 px-4 py-2">
             <Input
               value={signupForm.password}
               type="password"
@@ -83,9 +84,9 @@ export default function UserInfoForm(props: Props) {
           </div>
         </div>
       </form>
-      <div className="flex w-full max-w-2xl justify-end items-center mt-4">
+      <div className="mt-4 flex w-full max-w-2xl items-center justify-end">
         <button
-          className="bg-bgPrimary text-textPrimary px-4 py-2 rounded-lg"
+          className="rounded-lg bg-bgPrimary px-4 py-2 text-textPrimary"
           onClick={handleClickSaveBtn}
         >
           저장

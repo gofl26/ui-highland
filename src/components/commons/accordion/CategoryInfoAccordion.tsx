@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { createCategory, updateCategory, deleteCategory } from '@/serverActions/categories'
+
 import { useToast } from '@/components/commons/toast/ToastProvider'
+import { createCategory, updateCategory, deleteCategory } from '@/serverActions/categories'
 import { categoryResponse } from '@/types/category'
 interface Props {
   categoryInfo: categoryResponse[]
@@ -78,14 +79,14 @@ export default function CategoryInfoAccordion(props: Props) {
 
   return (
     <>
-      <div className="flex w-full justify-between mt-8 px-4 py-2 rounded-t-lg bg-[#FAFAFA]">
+      <div className="mt-8 flex w-full justify-between rounded-t-lg bg-[#FAFAFA] px-4 py-2">
         <p>카테고리 관리</p>
       </div>
-      <div className="flex flex-col w-full border p-4 space-y-2">
+      <div className="flex w-full flex-col space-y-2 border p-4">
         {category.map((item, index) => (
           <div
             key={index}
-            className={`flex items-center space-x-4 p-2 border rounded bg-white transition-colors`}
+            className={`flex items-center space-x-4 rounded border bg-white p-2 transition-colors`}
           >
             <input
               type="text"
@@ -95,11 +96,11 @@ export default function CategoryInfoAccordion(props: Props) {
                 newCategory[index].categoryName = e.target.value
                 setCategory(newCategory)
               }}
-              className="focus:outline-none flex-1 border rounded p-2 text-sm"
+              className="flex-1 rounded border p-2 text-sm focus:outline-none"
               placeholder="카테고리 이름"
             />
             <select
-              className="border rounded p-2 text-sm"
+              className="rounded border p-2 text-sm"
               value={item.active ? '활성화' : '비활성화'}
               onChange={(e) => {
                 const newCategoryInfo = [...category]
@@ -118,7 +119,7 @@ export default function CategoryInfoAccordion(props: Props) {
                 newCategoryInfo[index].categoryUrl = e.target.value
                 setCategory(newCategoryInfo)
               }}
-              className="focus:outline-none flex-1 border rounded p-2 text-sm"
+              className="flex-1 rounded border p-2 text-sm focus:outline-none"
               placeholder="카테고리 URL"
             />
             <button
@@ -134,12 +135,12 @@ export default function CategoryInfoAccordion(props: Props) {
         <div className="flex items-center justify-end gap-4">
           <button
             onClick={handleAddCategoryRow}
-            className="px-4 py-2 text-sm bg-gray-200 rounded hover:bg-gray-300"
+            className="rounded bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300"
           >
             추가
           </button>
           <button
-            className="px-4 py-2 text-sm rounded bg-bgPrimary text-textPrimary"
+            className="rounded bg-bgPrimary px-4 py-2 text-sm text-textPrimary"
             onClick={handleClickSaveCategory}
           >
             저장

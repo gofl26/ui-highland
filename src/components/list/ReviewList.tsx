@@ -1,7 +1,8 @@
 'use client'
-import { useEffect, useState } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
 import moment from 'moment'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+
 import { reviewResponse } from '@/types/review'
 
 type Row = {
@@ -42,35 +43,35 @@ export default function ReviewList({ reviewInfo }: props) {
     setCurrentPage(pathname)
   }, [pathname])
   return (
-    <div className="flex flex-col items-center w-full px-20">
-      <p className="flex justify-center mt-12 text-3xl font-semibold">커뮤니티</p>
-      <div className="flex justify-center gap-6 mt-12">
+    <div className="flex w-full flex-col items-center px-20">
+      <p className="mt-12 flex justify-center text-3xl font-semibold">커뮤니티</p>
+      <div className="mt-12 flex justify-center gap-6">
         <button
-          className={`flex justify-center items-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/notice' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
+          className={`flex w-28 items-center justify-center rounded-full px-3 py-2 ${currentPage === '/community/notice' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
           onClick={() => router.push('/community/notice')}
         >
           공지사항
         </button>
         <button
-          className={`flex justify-center items-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/customer' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
+          className={`flex w-28 items-center justify-center rounded-full px-3 py-2 ${currentPage === '/community/customer' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
           onClick={() => router.push('/community/customer')}
         >
           고객센터
         </button>
         <button
-          className={`flex justify-center items-center w-28 rounded-full px-3 py-2 ${currentPage === '/community/review' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
+          className={`flex w-28 items-center justify-center rounded-full px-3 py-2 ${currentPage === '/community/review' ? 'bg-bgPrimary text-textPrimary' : 'border'}`}
           onClick={() => router.push('/community/review')}
         >
           상품후기
         </button>
       </div>
-      <div className="flex flex-col w-full max-w-4xl mt-12">
-        <p className="mt-4 font-semibold border-b border-borderPrimary">상품 후기</p>
+      <div className="mt-12 flex w-full max-w-4xl flex-col">
+        <p className="mt-4 border-b border-borderPrimary font-semibold">상품 후기</p>
         <table className="min-w-full border-collapse border border-borderDefault text-sm">
           <thead>
             <tr className="bg-bgHeader">
               {columns.map(({ key, label, width }) => (
-                <th key={key} className={`border px-4 py-2 truncate ${width}`}>
+                <th key={key} className={`truncate border px-4 py-2 ${width}`}>
                   {label}
                 </th>
               ))}
@@ -85,7 +86,7 @@ export default function ReviewList({ reviewInfo }: props) {
                   onClick={() => setOpenIndex((prev) => (prev === idx ? null : idx))}
                 >
                   {columns.map(({ key, width }: any) => (
-                    <td key={key} className={`border px-4 py-2 truncate ${width}`}>
+                    <td key={key} className={`truncate border px-4 py-2 ${width}`}>
                       {formatCellValue(key, row[key]!)}
                     </td>
                   ))}
@@ -95,13 +96,13 @@ export default function ReviewList({ reviewInfo }: props) {
                 <tr className="transition-all">
                   <td
                     colSpan={columns.length}
-                    className={`p-0 border-t-0 overflow-hidden transition-all duration-300 ${
-                      openIndex === idx ? 'max-h-96 py-4 px-4' : 'max-h-0 py-0 px-0'
+                    className={`overflow-hidden border-t-0 p-0 transition-all duration-300 ${
+                      openIndex === idx ? 'max-h-96 p-4' : 'max-h-0 p-0'
                     }`}
                   >
                     <div className={`transition-all duration-300 ease-in-out`}>
                       {openIndex === idx && (
-                        <div className="bg-gray-100 rounded p-4 text-sm">
+                        <div className="rounded bg-gray-100 p-4 text-sm">
                           <strong>상세 내용:</strong>
                           <div className="mt-2 text-gray-700">
                             {/* 커스텀 상세 내용 */}

@@ -1,8 +1,7 @@
 'use client'
 
 import { Eye, EyeOff } from 'lucide-react'
-import { useState } from 'react'
-import React from 'react'
+import React, { useState } from 'react'
 
 export default function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   const { className = '', type, ...rest } = props
@@ -15,7 +14,7 @@ export default function Input(props: React.InputHTMLAttributes<HTMLInputElement>
     <div className="relative w-full">
       <input
         type={inputType}
-        className={`w-full border rounded-lg border-borderDefault p-2 pr-10 focus:outline-inputFocus ${className}`}
+        className={`w-full rounded-lg border border-borderDefault p-2 pr-10 focus:outline-inputFocus ${className}`}
         {...rest}
       />
       {isPasswordType && (

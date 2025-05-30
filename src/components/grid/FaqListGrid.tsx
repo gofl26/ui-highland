@@ -1,11 +1,13 @@
 'use client'
-import { useState, useEffect } from 'react'
 import moment from 'moment'
-import { createFaq, getFaq, deleteFaq, updateFaq } from '@/serverActions/faq'
+import { useState, useEffect } from 'react'
+
 import { useToast } from '@/components/commons/toast/ToastProvider'
 import CreateProductModal from '@/components/modals/CreateProductModal'
+import { createFaq, getFaq, deleteFaq, updateFaq } from '@/serverActions/faq'
 import { inquiryCategory } from '@/stores/inquiry'
 import { faqResponse, faqForm } from '@/types/faq'
+
 import Input from '../commons/input/defaultInput'
 
 type Row = {
@@ -132,21 +134,21 @@ export default function FaqListGrid({ faqInfo }: props) {
     }
   }
   return (
-    <div className="flex w-full mt-4">
+    <div className="mt-4 flex w-full">
       <div className="w-full">
-        <div className="flex w-full justify-between items-center mb-4">
+        <div className="mb-4 flex w-full items-center justify-between">
           <p className="text-sm">총 {totalNumber} 개</p>
           <div className="flex items-center gap-2">
             {selectedRowIndex !== null && (
               <div className="flex gap-2">
                 <button
-                  className="bg-red-600 text-textPrimary px-3 py-2 rounded-lg"
+                  className="rounded-lg bg-red-600 px-3 py-2 text-textPrimary"
                   onClick={handleClickDeleteFaq}
                 >
                   삭제
                 </button>
                 <button
-                  className="bg-bgHeader px-3 py-2 rounded-lg"
+                  className="rounded-lg bg-bgHeader px-3 py-2"
                   onClick={() => {
                     setFaqForm(data[selectedRowIndex])
                     setEditMode(true)
@@ -162,11 +164,11 @@ export default function FaqListGrid({ faqInfo }: props) {
               onSave={handleClickUpdateFaq}
             >
               <div className="flex w-full justify-center">
-                <p className="font-bold text-xl">질문 수정</p>
+                <p className="text-xl font-bold">질문 수정</p>
               </div>
-              <div className="flex flex-col w-full mt-4 border rounded-lg border-borderDefault">
-                <div className="flex w-full h-20 border-b border-borderDefault">
-                  <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+              <div className="mt-4 flex w-full flex-col rounded-lg border border-borderDefault">
+                <div className="flex h-20 w-full border-b border-borderDefault">
+                  <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                     질문
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
@@ -178,14 +180,14 @@ export default function FaqListGrid({ faqInfo }: props) {
                     />
                   </div>
                 </div>
-                <div className="flex w-full h-20 border-b border-borderDefault">
-                  <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+                <div className="flex h-20 w-full border-b border-borderDefault">
+                  <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                     유형
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
                     <select
                       value={faqForm.faqCategory}
-                      className="w-full border border-borderDefault rounded-lg px-2 py-3 text-sm focus:outline-inputFocus"
+                      className="w-full rounded-lg border border-borderDefault px-2 py-3 text-sm focus:outline-inputFocus"
                       onChange={(e) => {
                         const newFaqForm = JSON.parse(JSON.stringify(faqForm))
                         newFaqForm.faqCategory = e.target.value
@@ -198,8 +200,8 @@ export default function FaqListGrid({ faqInfo }: props) {
                     </select>
                   </div>
                 </div>
-                <div className="flex w-full h-20 border-b border-borderDefault">
-                  <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+                <div className="flex h-20 w-full border-b border-borderDefault">
+                  <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                     답변
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
@@ -214,7 +216,7 @@ export default function FaqListGrid({ faqInfo }: props) {
               </div>
             </CreateProductModal>
             <button
-              className="bg-bgPrimary text-textPrimary px-3 py-2 rounded-lg"
+              className="rounded-lg bg-bgPrimary px-3 py-2 text-textPrimary"
               onClick={() => setOpenCreateFaqModal(true)}
             >
               추가
@@ -225,11 +227,11 @@ export default function FaqListGrid({ faqInfo }: props) {
               onSave={handleClickCreateFaq}
             >
               <div className="flex w-full justify-center">
-                <p className="font-bold text-xl">질문 등록</p>
+                <p className="text-xl font-bold">질문 등록</p>
               </div>
-              <div className="flex flex-col w-full mt-4 border rounded-lg border-borderDefault">
+              <div className="mt-4 flex w-full flex-col rounded-lg border border-borderDefault">
                 <div className="flex w-full border-b border-borderDefault">
-                  <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+                  <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                     질문
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
@@ -241,14 +243,14 @@ export default function FaqListGrid({ faqInfo }: props) {
                     />
                   </div>
                 </div>
-                <div className="flex w-full h-20 border-b border-borderDefault">
-                  <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+                <div className="flex h-20 w-full border-b border-borderDefault">
+                  <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                     유형
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
                     <select
                       value={faqForm.faqCategory}
-                      className="w-full border border-borderDefault rounded-lg px-2 py-3 text-sm focus:outline-inputFocus"
+                      className="w-full rounded-lg border border-borderDefault px-2 py-3 text-sm focus:outline-inputFocus"
                       onChange={(e) => {
                         const newfaqForm = JSON.parse(JSON.stringify(faqForm))
                         newfaqForm.faqCategory = e.target.value
@@ -261,7 +263,7 @@ export default function FaqListGrid({ faqInfo }: props) {
                   </div>
                 </div>
                 <div className="flex w-full">
-                  <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+                  <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
                     답변
                   </div>
                   <div className="flex w-4/5 items-center px-4 py-2">
@@ -315,11 +317,11 @@ export default function FaqListGrid({ faqInfo }: props) {
           </tbody>
         </table>
         {/* Pagination */}
-        <div className="flex justify-end items-center gap-2 mt-4">
+        <div className="mt-4 flex items-center justify-end gap-2">
           <button
             onClick={handleClickPreBtn}
             disabled={page === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="rounded border px-3 py-1 disabled:opacity-50"
           >
             이전
           </button>
@@ -329,7 +331,7 @@ export default function FaqListGrid({ faqInfo }: props) {
           <button
             onClick={handleClickNextBtn}
             disabled={page >= Math.ceil(totalNumber / pageSize)}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="rounded border px-3 py-1 disabled:opacity-50"
           >
             다음
           </button>

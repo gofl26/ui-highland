@@ -1,9 +1,10 @@
 import Image from 'next/image'
+
+import { auth } from '@/auth'
 import ProductName from '@/components/commons/etc/ProductName'
 import ProductList from '@/components/list/ProductList'
 import { getCategory } from '@/serverActions/categories'
 import { getProduct } from '@/serverActions/products'
-import { auth } from '@/auth'
 
 export default async function Product() {
   const API_URL = process.env.API_URL || ''
@@ -12,8 +13,8 @@ export default async function Product() {
   const token = await auth()
   if (!category || !product) return null
   return (
-    <div className="flex flex-col w-full items-center text-textDefault overflow-auto">
-      <div className="flex flex-col justify-center items-center w-full gap-4 min-h-[300px] bg-[url('/assets/images/common/background01.svg')] bg-no-repeat bg-cover">
+    <div className="flex w-full flex-col items-center overflow-auto text-textDefault">
+      <div className="flex min-h-[300px] w-full flex-col items-center justify-center gap-4 bg-[url('/assets/images/common/background01.svg')] bg-cover bg-no-repeat">
         <div className="flex items-center gap-6">
           <Image
             src="/assets/images/product/apple_handprint.png"

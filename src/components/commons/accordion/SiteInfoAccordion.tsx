@@ -1,9 +1,10 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
-import { updateSite, createSite } from '@/serverActions/site'
+import { useState, useRef, useEffect } from 'react'
+
 import { useToast } from '@/components/commons/toast/ToastProvider'
+import { updateSite, createSite } from '@/serverActions/site'
 
 interface Props {
   siteInfo: { id?: string; siteName?: string; sitesFile?: File }
@@ -73,19 +74,19 @@ export default function SiteInfoAccordion(props: Props) {
   return (
     <>
       <div
-        className="flex w-full justify-between items-center mt-8 px-4 py-2 rounded-t-lg bg-bgHeader cursor-pointer"
+        className="mt-8 flex w-full cursor-pointer items-center justify-between rounded-t-lg bg-bgHeader px-4 py-2"
         onClick={() => setLogoOpen((prev) => !prev)}
       >
         <p>사이트 정보</p>
-        {logoOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+        {logoOpen ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
       </div>
       {!logoOpen && (
-        <div className="flex flex-col w-full border p-4 gap-4">
+        <div className="flex w-full flex-col gap-4 border p-4">
           <div className="flex w-full items-center gap-4">
             <p className="text-xs">사이트 이름</p>
             <input
               value={siteName}
-              className="focus:outline-none px-4 py-2 rounded-lg border border-borderDefault"
+              className="rounded-lg border border-borderDefault px-4 py-2 focus:outline-none"
               onChange={(e) => setSiteName(e.target.value)}
             />
           </div>
@@ -93,7 +94,7 @@ export default function SiteInfoAccordion(props: Props) {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600"
+                className="rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600"
               >
                 파일 선택
               </button>
@@ -105,14 +106,14 @@ export default function SiteInfoAccordion(props: Props) {
                 onChange={handleFileChange}
               />
               {selectedFile && (
-                <div className="text-xs text-gray-700 text-right">
+                <div className="text-right text-xs text-gray-700">
                   <div className="font-semibold">{selectedFile.name}</div>
                   <div>{(selectedFile.size / 1024).toFixed(1)} KB</div>
                 </div>
               )}
             </div>
             <button
-              className="px-4 py-2 rounded-lg bg-bgPrimary text-textPrimary"
+              className="rounded-lg bg-bgPrimary px-4 py-2 text-textPrimary"
               onClick={handleClickSaveLogoFile}
             >
               저장

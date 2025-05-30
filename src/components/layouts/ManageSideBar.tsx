@@ -1,8 +1,9 @@
 import Image from 'next/image'
-import { getUserInfo } from '@/serverActions/handler'
-import { getCategory } from '@/serverActions/categories'
-import { manageSideBarMenu } from '@/stores/sideBarMenu'
+
 import SideBarMenuButton from '@/components/commons/button/sideBarMenuButton'
+import { getCategory } from '@/serverActions/categories'
+import { getUserInfo } from '@/serverActions/handler'
+import { manageSideBarMenu } from '@/stores/sideBarMenu'
 import type { categoryResponse } from '@/types/category'
 
 export default async function ManageSideBar() {
@@ -18,8 +19,8 @@ export default async function ManageSideBar() {
     console.error('🔥 fetch error:', error)
   }
   return (
-    <div className="flex flex-col w-64 shrink-0 gap-8 p-4 bg-bgSideBar text-textDefault overflow-y-auto custom-scroll">
-      <div className="flex w-full py-4 gap-4 justify-center border-b border-borderSideBarDefault">
+    <div className="custom-scroll flex w-64 shrink-0 flex-col gap-8 overflow-y-auto bg-bgSideBar p-4 text-textDefault">
+      <div className="flex w-full justify-center gap-4 border-b border-borderSideBarDefault py-4">
         <Image
           src="/assets/images/common/logo.svg"
           alt="logo"
@@ -33,7 +34,7 @@ export default async function ManageSideBar() {
           <p className="text-xs font-normal">{userInfo.email}</p>
         </div>
       </div>
-      <div className="flex flex-col w-full">
+      <div className="flex w-full flex-col">
         {manageSideBarMenu.map(({ path, name }, index) => (
           <SideBarMenuButton
             key={index}
