@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ['http://localhost:3000', 'https://ui.ssrhouse.store'],
+      allowedOrigins: ['localhost:3000', 'ui.ssrhouse.store'],
     },
   },
   images: {
