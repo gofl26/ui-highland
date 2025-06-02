@@ -1,9 +1,10 @@
 'use client'
+import moment from 'moment'
 import { useState } from 'react'
+
 import { useToast } from '@/components/commons/toast/ToastProvider'
 import { getInquiry } from '@/serverActions/inquiries'
 import type { inquiryResponse, inquiryForm } from '@/types/inquiry'
-import moment from 'moment'
 
 type Row = {
   userName: string
@@ -75,21 +76,21 @@ export default function InquiryListGrid({ inquiryInfo }: props) {
     return value
   }
   return (
-    <div className="flex w-full mt-4">
+    <div className="mt-4 flex w-full">
       <div className="w-full">
-        <div className="flex w-full h-10 justify-between items-center mb-4">
+        <div className="mb-4 flex h-10 w-full items-center justify-between">
           <p className="text-sm">총 {totalNumber} 개</p>
           <div className="flex items-center gap-2">
             {selectedRowIndex !== null && (
               <div className="flex gap-2">
                 <button
-                  className="bg-red-600 text-textPrimary px-3 py-2 rounded-lg"
+                  className="rounded-lg bg-red-600 px-3 py-2 text-textPrimary"
                   onClick={handleClickDeleteInquiry}
                 >
                   삭제
                 </button>
                 <button
-                  className="bg-bgHeader px-3 py-2 rounded-lg"
+                  className="rounded-lg bg-bgHeader px-3 py-2"
                   onClick={() => {
                     setInquiryForm(data[selectedRowIndex])
                     setOpenAnswerModal(true)
@@ -139,11 +140,11 @@ export default function InquiryListGrid({ inquiryInfo }: props) {
           </tbody>
         </table>
         {/* Pagination */}
-        <div className="flex justify-end items-center gap-2 mt-4">
+        <div className="mt-4 flex items-center justify-end gap-2">
           <button
             onClick={handleClickPreBtn}
             disabled={page === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="rounded border px-3 py-1 disabled:opacity-50"
           >
             이전
           </button>
@@ -153,7 +154,7 @@ export default function InquiryListGrid({ inquiryInfo }: props) {
           <button
             onClick={handleClickNextBtn}
             disabled={page >= Math.ceil(totalNumber / pageSize)}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="rounded border px-3 py-1 disabled:opacity-50"
           >
             다음
           </button>

@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useAtom } from 'jotai'
-import Select from '@/components/commons/select/DefaultSelect'
+import { useEffect, useState } from 'react'
+
 import Checkbox from '@/components/commons/input/DefaultCheckBox'
+import Select from '@/components/commons/select/DefaultSelect'
 import { useToast } from '@/components/commons/toast/ToastProvider'
-import { inquiryCategory } from '@/stores/inquiry'
 import { atomInquiryInfo } from '@/stores/atoms/inquiryAtom'
+import { inquiryCategory } from '@/stores/inquiry'
 import type { inquiryForm } from '@/types/inquiry'
 import type { productResponse } from '@/types/product'
 
@@ -51,10 +52,10 @@ export default function InquiryForm({ className, products = [] }: props) {
     setProductOptions(transform)
   }, [products])
   return (
-    <div className={`flex flex-col justify-center items-center ${className}`}>
-      <form className="flex flex-col w-full max-w-2xl border rounded-lg border-borderDefault divide-y divide-borderDefault">
-        <div className="flex w-full h-20">
-          <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+    <div className={`flex flex-col items-center justify-center ${className}`}>
+      <form className="flex w-full max-w-2xl flex-col divide-y divide-borderDefault rounded-lg border border-borderDefault">
+        <div className="flex h-20 w-full">
+          <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
             비밀 글
           </div>
           <div className="flex w-4/5 items-center px-4 py-2">
@@ -68,8 +69,8 @@ export default function InquiryForm({ className, products = [] }: props) {
             />
           </div>
         </div>
-        <div className="flex w-full h-20">
-          <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+        <div className="flex h-20 w-full">
+          <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
             문의 유형
           </div>
           <div className="flex w-4/5 items-center px-4 py-2">
@@ -80,8 +81,8 @@ export default function InquiryForm({ className, products = [] }: props) {
             />
           </div>
         </div>
-        <div className="flex w-full h-20">
-          <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+        <div className="flex h-20 w-full">
+          <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
             상품 명
           </div>
           <div className="flex w-4/5 items-center px-4 py-2">
@@ -93,13 +94,13 @@ export default function InquiryForm({ className, products = [] }: props) {
           </div>
         </div>
         <div className="flex w-full">
-          <div className="flex w-1/5 justify-center items-center rounded-lg bg-bgDefault">
+          <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
             문의 글
           </div>
-          <div className="flex flex-col w-4/5  px-4 py-2">
+          <div className="flex w-4/5 flex-col  px-4 py-2">
             <textarea
               value={inquiryForm.inquiryTitle}
-              className="w-full min-h-40 border rounded-lg border-borderDefault p-2 pr-10 focus:outline-inputFocus"
+              className="min-h-40 w-full rounded-lg border border-borderDefault p-2 pr-10 focus:outline-inputFocus"
               onChange={(e) => {
                 if (e.target.value.length > MAX_LENGTH)
                   return showToast('문의 글은 최대 1000자까지 가능합니다.', 'error')

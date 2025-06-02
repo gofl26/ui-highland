@@ -1,7 +1,6 @@
 'use server'
 import { authFetch } from '@/lib/authFetch'
-import type { userVerify } from '@/types/users'
-import type { userResponse } from '@/types/users'
+import type { userVerify, userResponse } from '@/types/users'
 
 const API_URL = process.env.API_URL || ''
 

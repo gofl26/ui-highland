@@ -1,6 +1,6 @@
 export default function PersonalInfoDocumentForm() {
   return (
-    <div className="w-full h-full overflow-y-auto border border-[#D9D9D9] p-2 bg-white">
+    <div className="size-full overflow-y-auto border border-[#D9D9D9] bg-white p-2">
       <p className="text-[1.2rem] font-semibold text-[#343434]">개인정보 수집 및 이용 동의</p>
       <p className="mt-2 px-2 text-sm leading-relaxed text-gray-800">
         애플하이랜드(이하 `회사`라고 합니다)는 개인정보보호법 등 관련 법령상의 개인정보보호 규정을

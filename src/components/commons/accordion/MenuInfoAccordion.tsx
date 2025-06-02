@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import { GripVertical } from 'lucide-react'
-import { deleteMenu, updateMenu, createMenu } from '@/serverActions/menu'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
+import { GripVertical } from 'lucide-react'
+import { useState } from 'react'
+
 import { useToast } from '@/components/commons/toast/ToastProvider'
+import { deleteMenu, updateMenu, createMenu } from '@/serverActions/menu'
 import { menuResponse } from '@/types/menu'
 interface Props {
   menuInfo: menuResponse[]
@@ -95,10 +96,10 @@ export default function MenuInfoAccordion(props: Props) {
   }
   return (
     <>
-      <div className="flex w-full justify-between mt-8 px-4 py-2 rounded-t-lg bg-bgHeader">
+      <div className="mt-8 flex w-full justify-between rounded-t-lg bg-bgHeader px-4 py-2">
         <p>메뉴 관리</p>
       </div>
-      <div className="flex flex-col w-full border p-4 gap-4 space-y-6">
+      <div className="flex w-full flex-col gap-4 space-y-6 border p-4">
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="menu-list" isDropDisabled={!isSorting}>
             {(provided) => (
@@ -114,7 +115,7 @@ export default function MenuInfoAccordion(props: Props) {
                       <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
-                        className={`flex items-center space-x-4 p-2 border rounded bg-white transition-colors duration-300 ${
+                        className={`flex items-center space-x-4 rounded border bg-white p-2 transition-colors duration-300 ${
                           snapshot.isDragging ? 'bg-gray-100' : ''
                         }`}
                       >
@@ -124,7 +125,7 @@ export default function MenuInfoAccordion(props: Props) {
                             {...provided.dragHandleProps}
                             className="cursor-grab text-gray-400 hover:text-gray-600"
                           >
-                            <GripVertical className="w-5 h-5" />
+                            <GripVertical className="size-5" />
                           </div>
                         )}
 
@@ -136,7 +137,7 @@ export default function MenuInfoAccordion(props: Props) {
                             newMenus[index].menuName = e.target.value
                             setMenu(newMenus)
                           }}
-                          className="focus:outline-none flex-1 border rounded p-2 text-sm"
+                          className="flex-1 rounded border p-2 text-sm focus:outline-none"
                           placeholder="메뉴 이름"
                         />
                         <select
@@ -146,7 +147,7 @@ export default function MenuInfoAccordion(props: Props) {
                             newMenus[index].active = e.target.value === '활성화' ? true : false
                             setMenu(newMenus)
                           }}
-                          className="border rounded p-2 text-sm"
+                          className="rounded border p-2 text-sm"
                         >
                           <option>활성화</option>
                           <option>비활성화</option>
@@ -159,7 +160,7 @@ export default function MenuInfoAccordion(props: Props) {
                             newMenus[index].menuUrl = e.target.value
                             setMenu(newMenus)
                           }}
-                          className="focus:outline-none flex-1 border rounded p-2 text-sm"
+                          className="flex-1 rounded border p-2 text-sm focus:outline-none"
                           placeholder="메뉴 URL"
                         />
                         <button
@@ -182,31 +183,31 @@ export default function MenuInfoAccordion(props: Props) {
         <div className="flex items-center justify-end gap-4">
           <button
             onClick={handleAddMenuRow}
-            className="px-4 py-2 text-sm bg-gray-200 rounded hover:bg-gray-300"
+            className="rounded bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300"
           >
             추가
           </button>
 
-          <div className="border-l h-5" />
+          <div className="h-5 border-l" />
 
           {!isSorting ? (
             <button
               onClick={() => setIsSorting(true)}
-              className="px-4 py-2 text-sm bg-gray-200 rounded hover:bg-gray-300"
+              className="rounded bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300"
             >
               순서 설정
             </button>
           ) : (
             <button
               onClick={() => setIsSorting(false)}
-              className="px-4 py-2 text-sm rounded bg-bgPrimary text-textPrimary"
+              className="rounded bg-bgPrimary px-4 py-2 text-sm text-textPrimary"
             >
               순서 저장
             </button>
           )}
-          <div className="border-l h-5" />
+          <div className="h-5 border-l" />
           <button
-            className="px-4 py-2 text-sm rounded bg-bgPrimary text-textPrimary"
+            className="rounded bg-bgPrimary px-4 py-2 text-sm text-textPrimary"
             onClick={handleClickSaveMenu}
           >
             저장

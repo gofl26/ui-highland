@@ -35,7 +35,7 @@ export default function DefaultSelect({
     <div className={`flex flex-col gap-1 ${className}`}>
       {label && <label className="text-sm">{label}</label>}
       <select
-        className={`border rounded p-2 text-sm focus:outline-none`}
+        className={`rounded border p-2 text-sm focus:outline-none`}
         value={selected}
         onChange={handleChange}
         disabled={disabled}

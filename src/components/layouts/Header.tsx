@@ -1,9 +1,10 @@
 import type { Session } from 'next-auth'
-import AuthHeader from '@/components/layouts/AuthHeader'
-import MenuButton from '@/components/commons/button/menuButton'
+
 import ManageButton from '@/components/commons/button/manageButton'
-import type { siteResponse } from '@/types/sites'
+import MenuButton from '@/components/commons/button/menuButton'
+import AuthHeader from '@/components/layouts/AuthHeader'
 import type { menuResponse } from '@/types/menu'
+import type { siteResponse } from '@/types/sites'
 import type { userVerify } from '@/types/users'
 
 interface props {
@@ -15,10 +16,10 @@ interface props {
 }
 export default async function HeaderLayout({ token, apiUrl, siteInfo, menuInfo, user }: props) {
   return (
-    <header className="flex flex-col w-full bg-bgHeader backdrop-blur-sm">
+    <header className="flex w-full flex-col bg-bgHeader backdrop-blur-sm">
       <AuthHeader token={token} />
       <div className="flex w-full justify-between px-16 py-4">
-        <div className="flex w-1/2 h-14 items-center gap-4">
+        <div className="flex h-14 w-1/2 items-center gap-4">
           {siteInfo && siteInfo.length > 0 && apiUrl && (
             <MenuButton apiUrl={apiUrl} siteInfo={siteInfo[0]} menuInfo={menuInfo} />
           )}

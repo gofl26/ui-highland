@@ -1,14 +1,15 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { CircleArrowUp, Plus, Minus } from 'lucide-react'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { CircleArrowUp, Plus, Minus } from 'lucide-react'
-import { createCart } from '@/serverActions/cart'
-import BuyProductModal from '@/components/modals/BuyProductModal'
+import { useState, useEffect, useRef } from 'react'
+
 import { useToast } from '@/components/commons/toast/ToastProvider'
-import { formatNumberWithCommas } from '@/utils/formatNumberWithCommas'
+import BuyProductModal from '@/components/modals/BuyProductModal'
+import { createCart } from '@/serverActions/cart'
 import { categoryResponse } from '@/types/category'
 import { productResponse } from '@/types/product'
+import { formatNumberWithCommas } from '@/utils/formatNumberWithCommas'
 interface props {
   product: { rows: productResponse[]; total: number }
   category: categoryResponse[]
@@ -105,31 +106,31 @@ export default function ProductList({ product, category, apiUrl, token }: props)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
   return (
-    <div className="flex-col w-full items-center">
+    <div className="w-full flex-col items-center">
       {showTopMoveBtn === true && (
         <button
-          className="fixed top-12 right-12"
+          className="fixed right-12 top-12"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
           <CircleArrowUp size="30" />
         </button>
       )}
-      <div className="flex justify-center gap-6 mt-12">
-        <button className="flex justify-center bg-bgPrimary text-textPrimary w-28 rounded-full px-3 py-2">
+      <div className="mt-12 flex justify-center gap-6">
+        <button className="flex w-28 justify-center rounded-full bg-bgPrimary px-3 py-2 text-textPrimary">
           전체
         </button>
-        <button className="flex justify-center border w-28 rounded-full px-3 py-2">가정용</button>
-        <button className="flex justify-center border w-28 rounded-full px-3 py-2">선물용</button>
+        <button className="flex w-28 justify-center rounded-full border px-3 py-2">가정용</button>
+        <button className="flex w-28 justify-center rounded-full border px-3 py-2">선물용</button>
       </div>
-      <div className="p-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 p-20 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {productList.map((product) => (
           <div
             key={product.id}
-            className="bg-bgSecondary rounded-lg border overflow-hidden cursor-pointer h-[410px]"
+            className="h-[410px] cursor-pointer overflow-hidden rounded-lg border bg-bgSecondary"
             onClick={() => handleClickProductItem(product.id)}
           >
             {/* 이미지 */}
-            <div className="relative w-full h-[320px] group">
+            <div className="group relative h-[320px] w-full">
               <Image
                 src={product.productsFile}
                 alt={product.productName}
@@ -139,16 +140,16 @@ export default function ProductList({ product, category, apiUrl, token }: props)
                 sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 25vw"
               />
               {/* 어두운 오버레이 */}
-              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-black/30 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
               {/* 퀵뷰 텍스트 */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="text-white px-4 py-2 border border-white rounded text-sm font-semibold shadow-md">
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <span className="rounded border border-white px-4 py-2 text-sm font-semibold text-white shadow-md">
                   퀵뷰
                 </span>
               </div>
             </div>
-            <div className="flex flex-col px-4 py-2 gap-2">
+            <div className="flex flex-col gap-2 px-4 py-2">
               <p className="text-xl">{product.productName}</p>
               <p className="text-[#FF5A5A]">{formatNumberWithCommas(product.productPrice)} 원</p>
             </div>
@@ -158,18 +159,18 @@ export default function ProductList({ product, category, apiUrl, token }: props)
       {selectedProduct && (
         <BuyProductModal isOpen={openBuyProductModal} onClose={() => setOpenBuyProductModal(false)}>
           <div className="flex w-full gap-4">
-            <div className="relative w-1/2 min-h-[300px]">
+            <div className="relative min-h-[300px] w-1/2">
               <Image
                 src={selectedProduct.productsFile}
                 alt={selectedProduct.productName}
-                className="object-cover rounded-lg"
+                className="rounded-lg object-cover"
                 fill
                 priority
                 sizes="25vw"
               />
             </div>
-            <div className="flex flex-col w-1/2 px-8 py-2 gap-6">
-              <div className="p-2 border-b">
+            <div className="flex w-1/2 flex-col gap-6 px-8 py-2">
+              <div className="border-b p-2">
                 <p className="font-semibold">{selectedProduct.productName}</p>
               </div>
               <div className="flex w-full justify-between">
@@ -184,16 +185,16 @@ export default function ProductList({ product, category, apiUrl, token }: props)
                 <p className="text-sm">수량</p>
                 <div className="flex">
                   <button
-                    className="flex w-10 border justify-center items-center"
+                    className="flex w-10 items-center justify-center border"
                     onClick={handleClickMinusBtn}
                   >
                     <Minus size="16" />
                   </button>
-                  <div className="flex w-16 py-2 border-t border-b items-center justify-center">
+                  <div className="flex w-16 items-center justify-center border-y py-2">
                     {quantity}
                   </div>
                   <button
-                    className="flex w-10 border justify-center items-center"
+                    className="flex w-10 items-center justify-center border"
                     onClick={handleClickPlusBtn}
                   >
                     <Plus size="16" />
@@ -202,13 +203,13 @@ export default function ProductList({ product, category, apiUrl, token }: props)
               </div>
               <div className="flex w-full justify-center gap-4">
                 <button
-                  className="w-1/2 py-2 border rounded-lg border-borderDefault"
+                  className="w-1/2 rounded-lg border border-borderDefault py-2"
                   onClick={handleClickCreateCart}
                 >
                   장바구니
                 </button>
                 <button
-                  className="w-1/2 py-2 rounded-lg bg-bgPrimary text-textPrimary"
+                  className="w-1/2 rounded-lg bg-bgPrimary py-2 text-textPrimary"
                   onClick={handleClickBuyProduct}
                 >
                   바로 구매

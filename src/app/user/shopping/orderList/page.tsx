@@ -1,13 +1,13 @@
-import { getOrder } from '@/serverActions/orders'
 import OrderList from '@/components/list/OrderList'
+import { getOrder } from '@/serverActions/orders'
 
 export default async function OrderListPage() {
   const orderList = await getOrder()
 
   return (
-    <div className="flex flex-col w-full p-8 text-textDefault">
+    <div className="flex w-full flex-col p-8 text-textDefault">
       <p className="text-lg font-semibold">주문 / 배송 관리</p>
-      <OrderList className="w-full mt-20" />
+      <OrderList className="mt-20 w-full" />
     </div>
   )
 }

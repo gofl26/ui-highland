@@ -1,11 +1,11 @@
-import { getSite } from '@/serverActions/site'
-import { getMenu } from '@/serverActions/menu'
-import SiteInfoAccordion from '@/components/commons/accordion/SiteInfoAccordion'
-import MenuInfoAccordion from '@/components/commons/accordion/MenuInfoAccordion'
-import type { menuResponse } from '@/types/menu'
-import type { categoryResponse } from '@/types/category'
-import { getCategory } from '@/serverActions/categories'
 import CategoryInfoAccordion from '@/components/commons/accordion/CategoryInfoAccordion'
+import MenuInfoAccordion from '@/components/commons/accordion/MenuInfoAccordion'
+import SiteInfoAccordion from '@/components/commons/accordion/SiteInfoAccordion'
+import { getCategory } from '@/serverActions/categories'
+import { getMenu } from '@/serverActions/menu'
+import { getSite } from '@/serverActions/site'
+import type { categoryResponse } from '@/types/category'
+import type { menuResponse } from '@/types/menu'
 
 export default async function Site() {
   const API_URL = process.env.API_URL || ''
@@ -30,7 +30,7 @@ export default async function Site() {
   category = await getCategory()
 
   return (
-    <div className="flex flex-col w-full p-8 text-textDefault">
+    <div className="flex w-full flex-col p-8 text-textDefault">
       <p className="text-lg font-semibold">사이트 관리</p>
       <SiteInfoAccordion siteInfo={site} />
       {menu && <MenuInfoAccordion menuInfo={menu} />}

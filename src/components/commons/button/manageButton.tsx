@@ -1,8 +1,9 @@
 'use client'
+import { useSetAtom } from 'jotai'
+import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { MdOutlineLocalMall, MdOutlinePerson } from 'react-icons/md'
-import { useRouter } from 'next/navigation'
-import { useSetAtom } from 'jotai'
+
 import { atomUserInfo } from '@/stores/atoms'
 import type { userVerify } from '@/types/users'
 

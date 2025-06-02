@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+
 import { auth } from '@/auth'
 import { getUserInfo } from '@/serverActions/handler'
 

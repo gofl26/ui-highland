@@ -25,7 +25,7 @@ export default function ToastItem({
   return (
     <div
       className={`
-        px-4 py-2 rounded shadow text-white transition-opacity duration-500
+        rounded px-4 py-2 text-white shadow transition-opacity duration-500
         ${visible ? 'opacity-100' : 'opacity-0'}
         ${type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-gray-700'}
       `}

@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { TriangleAlert } from 'lucide-react'
+import { useEffect, useState } from 'react'
 export default function SuccessToast({ message }: { message: string[] }) {
   const [visible, setVisible] = useState(true)
 
@@ -12,9 +12,9 @@ export default function SuccessToast({ message }: { message: string[] }) {
   if (!visible) return null
   //
   return (
-    <div className="fixed top-24 right-10 z-50 bg-green-500 px-4 py-2 gap-4 rounded shadow-lg text-sm animate-slide-in">
+    <div className="fixed right-10 top-24 z-50 animate-slide-in gap-4 rounded bg-green-500 px-4 py-2 text-sm shadow-lg">
       {message.map((msg, index) => (
-        <p key={index} className="flex gap-2 items-center text-white">
+        <p key={index} className="flex items-center gap-2 text-white">
           <TriangleAlert size="16" />
           {msg}
         </p>

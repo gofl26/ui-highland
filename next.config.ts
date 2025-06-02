@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
   compiler: {
     styledComponents: true, // styled-components 사용 설정
   },
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['http://localhost:3000', 'https://ui.ssrhouse.store'],
+    },
+  },
   images: {
     remotePatterns: [
       {

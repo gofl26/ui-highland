@@ -1,4 +1,5 @@
 import { atomWithReset } from 'jotai/utils'
+
 import { inquiryForm } from '@/types/inquiry'
 
 export const atomInquiryInfo = atomWithReset<inquiryForm>({

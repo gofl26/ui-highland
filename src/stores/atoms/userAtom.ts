@@ -1,4 +1,5 @@
 import { atom } from 'jotai'
+
 import { userVerify } from '@/types/users'
 
 export const atomUserInfo = atom<userVerify>({

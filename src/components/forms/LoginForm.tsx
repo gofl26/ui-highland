@@ -1,9 +1,10 @@
 'use client'
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { signInWithCredentials } from '@/serverActions/auth'
+import { useState } from 'react'
+
 import Input from '@/components/commons/input/defaultInput'
 import { useToast } from '@/components/commons/toast/ToastProvider'
+import { signInWithCredentials } from '@/serverActions/auth'
 import { LoginForm as LoginFormType } from '@/types/login'
 
 const initLoginForm: LoginFormType = {
@@ -33,8 +34,8 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="flex flex-col min-w-96 justify-center items-center gap-2">
-      <form className="flex flex-col w-full rounded-lg gap-4" onSubmit={onClickLogin}>
+    <div className="flex min-w-96 flex-col items-center justify-center gap-2">
+      <form className="flex w-full flex-col gap-4 rounded-lg" onSubmit={onClickLogin}>
         <Input
           value={loginForm.email}
           placeholder="이메일"
@@ -48,25 +49,25 @@ export default function LoginForm() {
           placeholder="비밀번호"
           onChange={handleChangeInput}
         />
-        <button className="w-full px-4 py-2 rounded-lg bg-bgPrimary text-textPrimary">
+        <button className="w-full rounded-lg bg-bgPrimary px-4 py-2 text-textPrimary">
           로그인
         </button>
       </form>
-      <div className="flex w-full justify-between items-center">
+      <div className="flex w-full items-center justify-between">
         <button onClick={() => router.push('/signup')}>회원가입</button>
         <div className="flex gap-2">
           <button>아이디 찾기</button>
-          <p className="w-1 h-5 border-l border-textDefault"></p>
+          <p className="h-5 w-1 border-l border-textDefault"></p>
           <button>비밀번호 찾기</button>
         </div>
       </div>
-      <div className="flex w-full justify-between items-center mt-10 gap-4">
-        <div className="flex flex-1 h-1 border-b" />
+      <div className="mt-10 flex w-full items-center justify-between gap-4">
+        <div className="flex h-1 flex-1 border-b" />
         <p className="w-20">간편 로그인</p>
-        <div className="flex flex-1 h-1 border-b" />
+        <div className="flex h-1 flex-1 border-b" />
       </div>
-      <div className="flex w-full justify-between items-center gap-4">
-        <button className="flex flex-1 px-4 py-2 rounded-lg justify-center bg-[#FEE500]">
+      <div className="flex w-full items-center justify-between gap-4">
+        <button className="flex flex-1 justify-center rounded-lg bg-[#FEE500] px-4 py-2">
           카카오
         </button>
       </div>

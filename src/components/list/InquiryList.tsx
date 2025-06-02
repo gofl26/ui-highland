@@ -1,8 +1,9 @@
 'use client'
-import { useState, Fragment } from 'react'
 import moment from 'moment'
-import { getInquiry } from '@/serverActions/inquiries'
+import { useState, Fragment } from 'react'
+
 import { useToast } from '@/components/commons/toast/ToastProvider'
+import { getInquiry } from '@/serverActions/inquiries'
 import { inquiryResponse } from '@/types/inquiry'
 
 type Row = {
@@ -63,12 +64,12 @@ export default function InquiryList({ inquiryInfo }: props) {
     return value
   }
   return (
-    <div className="flex flex-col w-full mt-20">
+    <div className="mt-20 flex w-full flex-col">
       <table className="min-w-full border-collapse border border-borderDefault text-sm">
         <thead>
           <tr className="bg-bgHeader">
             {columns.map(({ key, label, width }) => (
-              <th key={key} className={`border px-4 py-2 truncate ${width}`}>
+              <th key={key} className={`truncate border px-4 py-2 ${width}`}>
                 {label}
               </th>
             ))}
@@ -82,7 +83,7 @@ export default function InquiryList({ inquiryInfo }: props) {
                 onClick={() => setOpenInquiryIndex((prev) => (prev === idx ? null : idx))}
               >
                 {columns.map(({ key, width }: any) => (
-                  <td key={key} className={`border px-4 py-2 truncate ${width}`}>
+                  <td key={key} className={`truncate border px-4 py-2 ${width}`}>
                     {formatCellValue(key, row[key]!)}
                   </td>
                 ))}
@@ -92,8 +93,8 @@ export default function InquiryList({ inquiryInfo }: props) {
               <tr className="transition-all">
                 <td
                   colSpan={columns.length}
-                  className={`p-0 border-t-0 overflow-hidden transition-all duration-300 ${
-                    openInquiryIndex === idx ? 'max-h-96 py-4 px-4' : 'max-h-0 py-0 px-0'
+                  className={`overflow-hidden border-t-0 p-0 transition-all duration-300 ${
+                    openInquiryIndex === idx ? 'max-h-96 p-4' : 'max-h-0 p-0'
                   }`}
                 >
                   <div className={`transition-all duration-300 ease-in-out`}>
@@ -113,11 +114,11 @@ export default function InquiryList({ inquiryInfo }: props) {
         </tbody>
       </table>
       {/* Pagination */}
-      <div className="flex justify-end items-center gap-2 mt-4">
+      <div className="mt-4 flex items-center justify-end gap-2">
         <button
           onClick={handleClickPreBtn}
           disabled={page === 1}
-          className="px-3 py-1 border rounded disabled:opacity-50"
+          className="rounded border px-3 py-1 disabled:opacity-50"
         >
           이전
         </button>
@@ -127,7 +128,7 @@ export default function InquiryList({ inquiryInfo }: props) {
         <button
           onClick={handleClickNextBtn}
           disabled={page >= Math.ceil(totalNumber / pageSize)}
-          className="px-3 py-1 border rounded disabled:opacity-50"
+          className="rounded border px-3 py-1 disabled:opacity-50"
         >
           다음
         </button>

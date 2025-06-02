@@ -1,8 +1,8 @@
 {
   "root": true,
-  "extends": ["next/core-web-vitals", "prettier"],
+  "extends": ["next/core-web-vitals", "prettier", "plugin:import/recommended", "plugin:tailwindcss/recommended"],
   "plugins": [
-    "prettier"
+    "prettier", "import", "tailwindcss"
   ],
   "parserOptions": {
     "project": "./tsconfig.json"
@@ -21,6 +21,30 @@
         "trailingComma": "all",
         "tabWidth": 2,
         "printWidth": 100
+      }
+    ],
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",      // Node.js built-ins
+          "external",     // External packages (npm)
+          "internal",     // Internal aliases like @/components
+          ["parent", "sibling", "index"] // Relative imports
+        ],
+        "pathGroups": [
+          {
+            "pattern": "@/**",
+            "group": "internal",
+            "position": "after"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
       }
     ]
   }

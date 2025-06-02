@@ -1,8 +1,9 @@
 'use client'
 import { useState } from 'react'
-import { userResponse } from '@/types/users'
-import { deleteUser, getUsers, updateUsers } from '@/serverActions/handler'
+
 import { useToast } from '@/components/commons/toast/ToastProvider'
+import { deleteUser, getUsers, updateUsers } from '@/serverActions/handler'
+import { userResponse } from '@/types/users'
 
 type Row = {
   email: string
@@ -111,13 +112,13 @@ export default function UserListGrid({ users }: Props) {
     }
   }
   return (
-    <div className="flex w-full mt-4">
+    <div className="mt-4 flex w-full">
       <div className="w-full">
         {/* Search Bar */}
-        <div className="flex justify-between mb-4">
+        <div className="mb-4 flex justify-between">
           <div className="flex gap-4">
             <select
-              className="border border-borderDefault rounded-lg px-2 py-1 focus:outline-inputFocus"
+              className="rounded-lg border border-borderDefault px-2 py-1 focus:outline-inputFocus"
               value={filterColumn}
               onChange={handleChangeSelect}
             >
@@ -129,7 +130,7 @@ export default function UserListGrid({ users }: Props) {
             </select>
             <input
               type="text"
-              className="border rounded-lg border-borderDefault p-2 pr-10 focus:outline-inputFocus"
+              className="rounded-lg border border-borderDefault p-2 pr-10 focus:outline-inputFocus"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               placeholder="검색"
@@ -140,7 +141,7 @@ export default function UserListGrid({ users }: Props) {
               }}
             />
             <button
-              className="bg-bgPrimary text-textPrimary px-4 py-2 rounded-lg"
+              className="rounded-lg bg-bgPrimary px-4 py-2 text-textPrimary"
               onClick={handleClickSearch}
             >
               검색
@@ -150,14 +151,14 @@ export default function UserListGrid({ users }: Props) {
             <div className="flex justify-end gap-2">
               {editMode ? (
                 <button
-                  className="bg-green-600 text-white px-3 py-1 rounded"
+                  className="rounded bg-green-600 px-3 py-1 text-white"
                   onClick={() => handleClickSaveUser()}
                 >
                   저장
                 </button>
               ) : (
                 <button
-                  className="bg-blue-600 text-white px-3 py-1 rounded"
+                  className="rounded bg-blue-600 px-3 py-1 text-white"
                   onClick={() => {
                     setEditMode(true)
                     console.info({ ...data[selectedRowIndex] })
@@ -169,7 +170,7 @@ export default function UserListGrid({ users }: Props) {
               )}
 
               <button
-                className="bg-red-600 text-white px-3 py-1 rounded"
+                className="rounded bg-red-600 px-3 py-1 text-white"
                 onClick={handleClickDeleteUser}
               >
                 삭제
@@ -215,7 +216,7 @@ export default function UserListGrid({ users }: Props) {
                   <td key={key} className="border px-4 py-2">
                     {editMode && selectedRowIndex === idx ? (
                       <input
-                        className="border px-1 py-0.5 rounded w-full text-textDefault"
+                        className="w-full rounded border px-1 py-0.5 text-textDefault"
                         value={editableRow?.[key] ?? ''}
                         disabled={key === 'email'}
                         onChange={(e) =>
@@ -235,11 +236,11 @@ export default function UserListGrid({ users }: Props) {
         </table>
 
         {/* Pagination */}
-        <div className="flex justify-end items-center gap-2 mt-4">
+        <div className="mt-4 flex items-center justify-end gap-2">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="rounded border px-3 py-1 disabled:opacity-50"
           >
             이전
           </button>
@@ -249,7 +250,7 @@ export default function UserListGrid({ users }: Props) {
           <button
             onClick={() => setPage((p) => Math.min(Math.ceil(totalNumber / pageSize), p + 1))}
             disabled={page >= Math.ceil(totalNumber / pageSize)}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="rounded border px-3 py-1 disabled:opacity-50"
           >
             다음
           </button>

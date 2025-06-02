@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
 import { ChevronDown, ChevronRight } from 'lucide-react'
+import { useRouter, usePathname } from 'next/navigation'
+import { useState, useEffect } from 'react'
+
 import type { categoryResponse } from '@/types/category'
 
 interface Props {
@@ -30,24 +31,20 @@ export default function SideBarMenuButton(props: Props) {
       <div className="w-full">
         <button
           onClick={() => setProductOpen((prev) => !prev)}
-          className="w-full px-4 py-4 flex items-center rounded-lg justify-between hover:bg-bgHoverSideBar"
+          className="flex w-full items-center justify-between rounded-lg p-4 hover:bg-bgHoverSideBar"
         >
           <span>상품 관리</span>
-          {isProductOpen ? (
-            <ChevronDown className="w-4 h-4" />
-          ) : (
-            <ChevronRight className="w-4 h-4" />
-          )}
+          {isProductOpen ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
         </button>
 
         <div
           className={`overflow-hidden transition-all duration-300 ease-in-out ${isProductOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}
         >
-          <div className="w-full space-y-1 text-sm px-2 py-1">
+          <div className="w-full space-y-1 px-2 py-1 text-sm">
             {categories?.map(({ categoryName, categoryUrl }, index) => (
               <button
                 key={index}
-                className={`flex w-full px-4 py-2 rounded-lg hover:bg-bgHoverSideBar ${selectedMenu === categoryUrl ? 'bg-bgHoverSideBar' : ''}`}
+                className={`flex w-full rounded-lg px-4 py-2 hover:bg-bgHoverSideBar ${selectedMenu === categoryUrl ? 'bg-bgHoverSideBar' : ''}`}
                 onClick={() => router.push(`/${type}/products/${categoryUrl}`)}
               >
                 - {categoryName}
@@ -60,7 +57,7 @@ export default function SideBarMenuButton(props: Props) {
   }
   return (
     <button
-      className={`flex px-4 py-4 rounded-lg hover:bg-bgHoverSideBar ${selectedMenu === path ? 'bg-bgHoverSideBar' : ''}`}
+      className={`flex rounded-lg p-4 hover:bg-bgHoverSideBar ${selectedMenu === path ? 'bg-bgHoverSideBar' : ''}`}
       onClick={() => router.push(`/${type}${path}`)}
     >
       {name}
