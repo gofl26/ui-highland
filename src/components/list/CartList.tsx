@@ -2,8 +2,10 @@
 import Image from 'next/image'
 import { useState } from 'react'
 
+import NumberStepper from '@/components/commons/button/numberStepper'
 import Checkbox from '@/components/commons/input/DefaultCheckBox'
 import { cartResponse } from '@/types/cart'
+
 interface props {
   className: string
   cartInfo: cartResponse[]
@@ -53,7 +55,7 @@ export default function CartList({ className, cartInfo: rows }: props) {
                 className={`cursor-pointer ${selectedData.includes(row.id) ? 'bg-bgPrimary' : 'even:bg-gray-50 hover:bg-gray-100'}`}
                 onClick={() => {}}
               >
-                <td className=" px-4 py-2">
+                <td className="px-4 py-2">
                   <Checkbox
                     checked={selectedData.includes(row.id)}
                     onChange={() => {
@@ -65,18 +67,24 @@ export default function CartList({ className, cartInfo: rows }: props) {
                     }}
                   />
                 </td>
-                <td className="flex items-center gap-2 px-4 py-2 ">
-                  <Image
-                    src={`https://api.ssrhouse.store/api/files/getFile?fileName=${row.productFile}`}
-                    alt="image"
-                    width="64"
-                    height="64"
-                    className="rounded-lg"
-                  />
-                  <p>{row.productName}</p>
+                <td className="px-4 py-2 ">
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={`https://api.ssrhouse.store/api/files/getFile?fileName=${row.productFile}`}
+                      alt="image"
+                      width="64"
+                      height="64"
+                      className="rounded-lg"
+                    />
+                    {row.productName}
+                  </div>
                 </td>
-                <td className="flex items-center truncate px-4 py-2"></td>
-                <td className="flex items-center truncate px-4 py-2"></td>
+                <td className="truncate px-4 py-2">
+                  <div className="flex">
+                    <NumberStepper value={row.cartQuantity} />
+                  </div>
+                </td>
+                <td className="truncate px-4 py-2">{row.cartQuantity * row.productPrice}원</td>
               </tr>
             ))}
           </tbody>
