@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image'
 import { useState } from 'react'
 
 import Checkbox from '@/components/commons/input/DefaultCheckBox'
@@ -10,18 +11,17 @@ interface props {
 type Row = {
   productName: string
   cartQuantity: number
+  productPrice: number
 }
 const columns: { key: keyof Row; label: string; width: string }[] = [
-  { key: 'productName', label: '상품 이름', width: 'w-full' },
   { key: 'cartQuantity', label: '수량', width: '' },
+  { key: 'productPrice', label: '금액', width: '' },
 ]
 
 export default function CartList({ className, cartInfo: rows }: props) {
   const [data, setData] = useState(rows)
+  const [selectedData, setSelectedData] = useState<string[]>([])
 
-  const formatCellValue = (key: keyof Row, value: string | number) => {
-    return value
-  }
   return (
     <div className={className}>
       <div className="flex w-full flex-col items-center">
@@ -29,30 +29,54 @@ export default function CartList({ className, cartInfo: rows }: props) {
           <thead>
             <tr className="bg-bgHeader">
               <th className="border px-4 py-2">
-                <Checkbox checked={true} onChange={() => {}} />
+                <Checkbox
+                  checked={selectedData.length === data.length}
+                  onChange={() => {
+                    if (selectedData.length === data.length) {
+                      setSelectedData([])
+                    } else {
+                      const ids = data.map(({ id }) => id)
+                      setSelectedData(ids)
+                    }
+                  }}
+                />
               </th>
-              {columns.map(({ key, label, width }) => (
-                <th key={key} className={`truncate border px-4 py-2 ${width}`}>
-                  {label}
-                </th>
-              ))}
+              <th className="w-full truncate border px-4 py-2">상품이름</th>
+              <th className="truncate border px-4 py-2">수량</th>
+              <th className="truncate border px-4 py-2">금액</th>
             </tr>
           </thead>
           <tbody>
             {data.map((row, idx) => (
               <tr
                 key={idx}
-                className={`cursor-pointer even:bg-gray-50 hover:bg-gray-100`}
+                className={`cursor-pointer ${selectedData.includes(row.id) ? 'bg-bgPrimary' : 'even:bg-gray-50 hover:bg-gray-100'}`}
                 onClick={() => {}}
               >
-                <td className="border px-4 py-2">
-                  <Checkbox checked={true} onChange={() => {}} />
+                <td className=" px-4 py-2">
+                  <Checkbox
+                    checked={selectedData.includes(row.id)}
+                    onChange={() => {
+                      if (selectedData.includes(row.id)) {
+                        setSelectedData((prev) => prev.filter((item) => item !== row.id))
+                      } else {
+                        setSelectedData((prev) => [...prev, row.id])
+                      }
+                    }}
+                  />
                 </td>
-                {columns.map(({ key, width }) => (
-                  <td key={key} className={`truncate border px-4 py-2 ${width}`}>
-                    {formatCellValue(key, row[key]!)}
-                  </td>
-                ))}
+                <td className="flex items-center gap-2 px-4 py-2 ">
+                  <Image
+                    src={`https://api.ssrhouse.store/api/files/getFile?fileName=${row.productFile}`}
+                    alt="image"
+                    width="64"
+                    height="64"
+                    className="rounded-lg"
+                  />
+                  <p>{row.productName}</p>
+                </td>
+                <td className="flex items-center truncate px-4 py-2"></td>
+                <td className="flex items-center truncate px-4 py-2"></td>
               </tr>
             ))}
           </tbody>
