@@ -1,5 +1,6 @@
 'use server'
 import { authFetch } from '@/lib/authFetch'
+import type { searchAddressResponse } from '@/types/searchAddress'
 import type { userVerify, userResponse } from '@/types/users'
 
 const API_URL = process.env.API_URL || ''
@@ -132,6 +133,30 @@ export async function uploadFile(formData: FormData) {
     const fileName = fileNameArray[fileNameArray.length - 1]
     const a = `${API_URL}/api/files/getFile?fileName=${fileName}`
     return a
+  } catch (error) {
+    return
+  }
+}
+interface jusoDataType {
+  from: number
+  size: number
+  searchAddressKey: string
+}
+export async function juso(
+  jusoData: jusoDataType,
+): Promise<{ results: { juso: searchAddressResponse[] } } | undefined> {
+  try {
+    const result = await fetch(
+      `${API_URL}/api/juso/get?currentPage=${jusoData.from}&countPerPage=${jusoData.size}&keyword=${jusoData.searchAddressKey}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+    const { message } = await result.json()
+    return message
   } catch (error) {
     return
   }
