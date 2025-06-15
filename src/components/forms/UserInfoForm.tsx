@@ -54,7 +54,10 @@ export default function UserInfoForm(props: Props) {
   }
   return (
     <div className="flex w-full flex-col items-center justify-center">
-      <form className="flex w-full max-w-2xl flex-col rounded-lg border border-borderDefault">
+      <div className="w-full max-w-2xl border-b border-borderPrimary">
+        <p>비밀번호 변경</p>
+      </div>
+      <form className="mt-4 flex w-full max-w-2xl flex-col rounded-lg border border-borderDefault">
         <div className="flex h-20 w-full border-b border-borderDefault">
           <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
             이메일

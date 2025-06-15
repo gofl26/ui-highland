@@ -2,7 +2,6 @@ import CartList from '@/components/list/CartList'
 import { getCart } from '@/serverActions/cart'
 export default async function OrderListPage() {
   const cartList = await getCart()
-  console.info('🚀 cartList:', cartList)
 
   return (
     <div className="flex w-full flex-col p-8 text-textDefault">
