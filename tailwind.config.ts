@@ -16,7 +16,7 @@ export default {
         bgHoverSideBar: 'white',
         bgDefault: '#FAFAFA',
         bgPrimary: '#856655',
-        bgSecondary: '#FAFAFA',
+        bgSecondary: '#F5F5F5',
         textDefault: '#4D2E1C',
         textPrimary: '#FFFFFF',
         textSuccess: '#43C26D',

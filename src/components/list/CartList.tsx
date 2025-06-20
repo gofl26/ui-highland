@@ -6,7 +6,11 @@ import { useEffect, useState } from 'react'
 import NumberStepper from '@/components/commons/button/numberStepper'
 import Checkbox from '@/components/commons/input/DefaultCheckBox'
 import CreateOrderModal from '@/components/modals/CreateOrderModal'
+import { getDelivery } from '@/serverActions/deliveryAddress'
 import { cartResponse } from '@/types/cart'
+import { deliveryResponse } from '@/types/delivery'
+
+import { useToast } from '../commons/toast/ToastProvider'
 
 interface props {
   className: string
@@ -18,11 +22,22 @@ export default function CartList({ className, cartInfo: rows }: props) {
   const [selectedData, setSelectedData] = useState<string[]>([])
   const [totalPrice, setTotalPrice] = useState(0)
   const [openCreateOrderModal, setOpenCreateOrderModal] = useState(false)
+  const [deliveryChangeStatus, setDeliveryChangeStatus] = useState(false)
+  const [deliveryList, setDeliveryList] = useState<deliveryResponse[]>([])
+  const { showToast } = useToast()
 
   const updateQuantity = (id: string, newQuantity: number) => {
     setData((prev) =>
       prev.map((row) => (row.id === id ? { ...row, cartQuantity: newQuantity } : row)),
     )
+  }
+  const getDeliveryAddress = async () => {
+    const _deliveryList = await getDelivery()
+    if (!_deliveryList) {
+      showToast('배송지 조회에 실패했습니다', 'error')
+      return
+    }
+    setDeliveryList(_deliveryList)
   }
   const handleCreateOrder = () => {}
   useEffect(() => {
@@ -132,20 +147,65 @@ export default function CartList({ className, cartInfo: rows }: props) {
           onSave={handleCreateOrder}
         >
           <div className="flex w-full items-center gap-4">
-            <ChevronLeft onClick={() => setOpenCreateOrderModal(false)} />
+            <ChevronLeft
+              className="cursor-pointer"
+              onClick={() => setOpenCreateOrderModal(false)}
+            />
             <p className="text-xl">주문 / 결제</p>
           </div>
           <div className="flex w-full flex-col rounded-lg border border-borderPrimary p-4">
-            <div className="flex justify-between">
+            <div className="mb-4 flex justify-between">
               <p className="text-lg">배송지</p>
-              <ChevronRight />
+              {deliveryChangeStatus ? (
+                <ChevronLeft
+                  className="cursor-pointer"
+                  onClick={() => setDeliveryChangeStatus(false)}
+                />
+              ) : (
+                <ChevronRight
+                  className="cursor-pointer"
+                  onClick={async () => {
+                    await getDeliveryAddress()
+                    setDeliveryChangeStatus(true)
+                  }}
+                />
+              )}
             </div>
-            <div className="flex w-full flex-col gap-2 p-2">
-              <p>배송지 이름:</p>
-              <p>주소:</p>
-              <p>받는 사람:</p>
-              <p>핸드폰:</p>
-            </div>
+            {deliveryChangeStatus ? (
+              <div className="flex w-full flex-col gap-2">
+                {deliveryList.map(
+                  (
+                    {
+                      deliveryName,
+                      deliveryAddress,
+                      deliveryDetailAddress,
+                      deliveryPhoneNumber,
+                      deliveryRecipient,
+                    },
+                    index,
+                  ) => (
+                    <div
+                      key={index}
+                      className="flex w-full flex-col gap-2 rounded-lg bg-bgSecondary p-2"
+                    >
+                      <p>배송지 이름: {deliveryName}</p>
+                      <p>
+                        주소: {deliveryAddress} {deliveryDetailAddress}
+                      </p>
+                      <p>받는 사람: {deliveryRecipient}</p>
+                      <p>핸드폰: {deliveryPhoneNumber}</p>
+                    </div>
+                  ),
+                )}
+              </div>
+            ) : (
+              <div className="flex w-full flex-col gap-2 p-2">
+                <p>배송지 이름:</p>
+                <p>주소:</p>
+                <p>받는 사람:</p>
+                <p>핸드폰:</p>
+              </div>
+            )}
           </div>
         </CreateOrderModal>
       </div>
