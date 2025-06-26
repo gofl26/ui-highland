@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import NumberStepper from '@/components/commons/button/numberStepper'
 import Checkbox from '@/components/commons/input/DefaultCheckBox'
 import CreateOrderModal from '@/components/modals/CreateOrderModal'
+import { deleteCart } from '@/serverActions/cart'
 import { getDelivery } from '@/serverActions/deliveryAddress'
 import { cartResponse } from '@/types/cart'
 import { deliveryResponse } from '@/types/delivery'
@@ -24,6 +25,7 @@ export default function CartList({ className, cartInfo: rows }: props) {
   const [openCreateOrderModal, setOpenCreateOrderModal] = useState(false)
   const [deliveryChangeStatus, setDeliveryChangeStatus] = useState(false)
   const [deliveryList, setDeliveryList] = useState<deliveryResponse[]>([])
+  const [selectedDelivery, setSelectedDelivery] = useState<deliveryResponse>()
   const { showToast } = useToast()
 
   const updateQuantity = (id: string, newQuantity: number) => {
@@ -40,6 +42,11 @@ export default function CartList({ className, cartInfo: rows }: props) {
     setDeliveryList(_deliveryList)
   }
   const handleCreateOrder = () => {}
+  const handleClickDeleteCart = async () => {
+    const result = await deleteCart(selectedData)
+    if (result) showToast('삭제에 성공했습니다.', 'success')
+    else showToast('삭제에 실패했습니다.', 'error')
+  }
   useEffect(() => {
     const price = selectedData.reduce((acc, _id) => {
       const _data = data.find(({ id }) => id === _id)
@@ -48,6 +55,10 @@ export default function CartList({ className, cartInfo: rows }: props) {
     }, 0)
     setTotalPrice(price)
   }, [selectedData, data])
+  useEffect(() => {
+    const defaultDelivery = deliveryList.find(({ deliveryDefault }) => deliveryDefault)
+    if (defaultDelivery) setSelectedDelivery(defaultDelivery)
+  }, [deliveryList])
   return (
     <div className={className}>
       <div className="flex w-full flex-col items-center">
@@ -76,7 +87,7 @@ export default function CartList({ className, cartInfo: rows }: props) {
             {data.map((row, idx) => (
               <tr
                 key={idx}
-                className={`cursor-pointer ${selectedData.includes(row.id) ? 'bg-bgPrimary text-textPrimary' : 'even:bg-gray-50 hover:bg-gray-100'}`}
+                className="cursor-pointer even:bg-gray-50 hover:bg-gray-100"
                 onClick={() => {}}
               >
                 <td className="px-4 py-2">
@@ -117,7 +128,9 @@ export default function CartList({ className, cartInfo: rows }: props) {
           </tbody>
         </table>
         <div className="mt-4 flex w-full">
-          <button className="rounded-lg bg-bgBtnDefault px-5 py-2">선택 상품 삭제</button>
+          <button className="rounded-lg bg-bgBtnDefault px-5 py-2" onClick={handleClickDeleteCart}>
+            선택 상품 삭제
+          </button>
         </div>
         <div className="mt-4 flex w-full justify-end gap-2">
           <p>총 {selectedData.length}개의 상품금액</p>
@@ -130,13 +143,19 @@ export default function CartList({ className, cartInfo: rows }: props) {
         <div className="mt-4 flex w-full justify-end gap-4">
           <button
             className="rounded-lg border border-borderPrimary bg-bgBtnDefault px-5 py-2"
-            onClick={() => setOpenCreateOrderModal(true)}
+            onClick={async () => {
+              await getDeliveryAddress()
+              setOpenCreateOrderModal(true)
+            }}
           >
             선택 상품 주문
           </button>
           <button
             className="rounded-lg bg-bgBtnPrimary px-5 py-2 text-textPrimary"
-            onClick={() => setOpenCreateOrderModal(true)}
+            onClick={async () => {
+              await getDeliveryAddress()
+              setOpenCreateOrderModal(true)
+            }}
           >
             전체 상품 주문
           </button>
@@ -155,7 +174,7 @@ export default function CartList({ className, cartInfo: rows }: props) {
           </div>
           <div className="flex w-full flex-col rounded-lg border border-borderPrimary p-4">
             <div className="mb-4 flex justify-between">
-              <p className="text-lg">배송지</p>
+              <p className="text-lg">배송지 선택</p>
               {deliveryChangeStatus ? (
                 <ChevronLeft
                   className="cursor-pointer"
@@ -164,48 +183,63 @@ export default function CartList({ className, cartInfo: rows }: props) {
               ) : (
                 <ChevronRight
                   className="cursor-pointer"
-                  onClick={async () => {
-                    await getDeliveryAddress()
+                  onClick={() => {
                     setDeliveryChangeStatus(true)
                   }}
                 />
               )}
             </div>
-            {deliveryChangeStatus ? (
-              <div className="flex w-full flex-col gap-2">
-                {deliveryList.map(
-                  (
-                    {
-                      deliveryName,
-                      deliveryAddress,
-                      deliveryDetailAddress,
-                      deliveryPhoneNumber,
-                      deliveryRecipient,
-                    },
-                    index,
-                  ) => (
-                    <div
-                      key={index}
-                      className="flex w-full flex-col gap-2 rounded-lg bg-bgSecondary p-2"
-                    >
-                      <p>배송지 이름: {deliveryName}</p>
-                      <p>
-                        주소: {deliveryAddress} {deliveryDetailAddress}
-                      </p>
-                      <p>받는 사람: {deliveryRecipient}</p>
-                      <p>핸드폰: {deliveryPhoneNumber}</p>
-                    </div>
-                  ),
-                )}
+            {selectedDelivery === undefined ? (
+              <div className="flex w-full justify-center p-2">
+                <p>배송지를 선택해주세요.</p>
               </div>
             ) : (
-              <div className="flex w-full flex-col gap-2 p-2">
-                <p>배송지 이름:</p>
-                <p>주소:</p>
-                <p>받는 사람:</p>
-                <p>핸드폰:</p>
-              </div>
+              <>
+                {deliveryChangeStatus ? (
+                  <div className="flex w-full flex-col gap-2">
+                    {deliveryList.map(
+                      (
+                        {
+                          deliveryName,
+                          deliveryAddress,
+                          deliveryDetailAddress,
+                          deliveryPhoneNumber,
+                          deliveryRecipient,
+                        },
+                        index,
+                      ) => (
+                        <div
+                          key={index}
+                          className="flex w-full flex-col gap-2 rounded-lg bg-bgSecondary p-2"
+                        >
+                          <p>배송지 이름: {deliveryName}</p>
+                          <p>
+                            주소: {deliveryAddress} {deliveryDetailAddress}
+                          </p>
+                          <p>받는 사람: {deliveryRecipient}</p>
+                          <p>핸드폰: {deliveryPhoneNumber}</p>
+                        </div>
+                      ),
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex w-full flex-col gap-2 rounded-lg bg-bgSecondary p-2">
+                    <p className="text-lg font-semibold">{selectedDelivery.deliveryName}</p>
+                    <p>{selectedDelivery.deliveryAddress}</p>
+                    <p>{selectedDelivery.deliveryRecipient}</p>
+                    <p>{selectedDelivery.deliveryPhoneNumber}</p>
+                  </div>
+                )}
+              </>
             )}
+          </div>
+          <div className="flex w-full flex-col rounded-lg border border-borderPrimary p-4">
+            <div className="mb-4 flex">
+              <p className="text-lg">구매 상품</p>
+            </div>
+            <div className="flex w-full flex-col">
+              <div className="border-b"></div>
+            </div>
           </div>
         </CreateOrderModal>
       </div>

@@ -88,6 +88,10 @@ export default function DeliveryForm({ delivery }: props) {
     handleClickSearchAddress(page, 10)
   }
   useEffect(() => {
+    const defaultDelivery = delivery.find(({ deliveryDefault }) => deliveryDefault)
+    if (defaultDelivery) setSelectedDelivery(defaultDelivery.id)
+  }, [delivery])
+  useEffect(() => {
     const response = delivery.find(({ id }) => selectedDelivery === id)
     if (!response) return
 

@@ -64,7 +64,7 @@ export default function ProductList({ product, category, apiUrl, token }: props)
     const result = await createCart(cartData)
     if (result) {
       showToast('장바구니에 담았습니다.', 'success')
-      router.push('/users/cart')
+      router.push('/user/shopping/cart')
     } else showToast('장바구니에 담기에 실패했습니다..', 'error')
   }
   const handleClickMinusBtn = () => {
