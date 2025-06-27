@@ -8,11 +8,13 @@ import Checkbox from '@/components/commons/input/DefaultCheckBox'
 import CreateOrderModal from '@/components/modals/CreateOrderModal'
 import { deleteCart } from '@/serverActions/cart'
 import { getDelivery } from '@/serverActions/deliveryAddress'
+import { createOrder } from '@/serverActions/orders'
+import { bankCodeSrc } from '@/stores/bank'
 import { cartResponse } from '@/types/cart'
 import { deliveryResponse } from '@/types/delivery'
+import { formatNumberWithCommas } from '@/utils/formatNumberWithCommas'
 
 import { useToast } from '../commons/toast/ToastProvider'
-
 interface props {
   className: string
   cartInfo: cartResponse[]
@@ -26,6 +28,10 @@ export default function CartList({ className, cartInfo: rows }: props) {
   const [deliveryChangeStatus, setDeliveryChangeStatus] = useState(false)
   const [deliveryList, setDeliveryList] = useState<deliveryResponse[]>([])
   const [selectedDelivery, setSelectedDelivery] = useState<deliveryResponse>()
+  const [method, setMethod] = useState('bank')
+  const [bankCode, setBankCode] = useState('')
+  const [accountNumber, setAccountNumber] = useState('')
+  const [receiptOption, setReceiptOption] = useState(false)
   const { showToast } = useToast()
 
   const updateQuantity = (id: string, newQuantity: number) => {
@@ -41,7 +47,9 @@ export default function CartList({ className, cartInfo: rows }: props) {
     }
     setDeliveryList(_deliveryList)
   }
-  const handleCreateOrder = () => {}
+  const handleCreateOrder = async () => {
+    // await createOrder()
+  }
   const handleClickDeleteCart = async () => {
     const result = await deleteCart(selectedData)
     if (result) showToast('삭제에 성공했습니다.', 'success')
@@ -122,7 +130,9 @@ export default function CartList({ className, cartInfo: rows }: props) {
                     />
                   </div>
                 </td>
-                <td className="truncate px-4 py-2">{row.cartQuantity * row.productPrice}원</td>
+                <td className="truncate px-4 py-2">
+                  {formatNumberWithCommas(row.cartQuantity * row.productPrice)}원
+                </td>
               </tr>
             ))}
           </tbody>
@@ -235,10 +245,125 @@ export default function CartList({ className, cartInfo: rows }: props) {
           </div>
           <div className="flex w-full flex-col rounded-lg border border-borderPrimary p-4">
             <div className="mb-4 flex">
-              <p className="text-lg">구매 상품</p>
+              <p className="text-lg">주문 상품</p>
             </div>
-            <div className="flex w-full flex-col">
-              <div className="border-b"></div>
+            <div className="flex w-full flex-col gap-2">
+              {data
+                .filter(({ id }) => selectedData.includes(id))
+                .map(({ productName, productPrice, cartQuantity }, index) => (
+                  <div key={index} className="rounded-lg bg-bgSecondary p-2">
+                    <p className="font-semibold">{productName}</p>
+                    <div className="flex items-center justify-between">
+                      <p>수량: {cartQuantity}개</p>
+                      <p>{formatNumberWithCommas(productPrice * cartQuantity)}원</p>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+          <div className="flex w-full justify-end rounded-lg border border-borderPrimary p-4">
+            <p>총 주문 금액: {formatNumberWithCommas(totalPrice)}원</p>
+          </div>
+          <div className="flex w-full flex-col rounded-lg border border-borderPrimary p-4">
+            <div className="mb-4 flex">
+              <p className="text-lg">결제 방식</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="radio"
+                id="bank"
+                name="payMethod"
+                value="bank"
+                checked={method === 'bank'}
+                onChange={() => setMethod('bank')}
+                className="accent-bgPrimary"
+              />
+              <label htmlFor="bank" className="cursor-pointer">
+                무통장입금
+              </label>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="radio"
+                id="card"
+                name="payMethod"
+                value="card"
+                checked={method === 'card'}
+                onChange={() => setMethod('card')}
+                className="accent-bgPrimary"
+              />
+              <label htmlFor="card" className="cursor-pointer">
+                카드결제
+              </label>
+            </div>
+            {method === 'bank' && (
+              <div className="mt-2 space-y-2">
+                <div>
+                  <label htmlFor="bankCode" className="block text-sm font-medium">
+                    은행명
+                  </label>
+                  <select
+                    id="bankCode"
+                    value={bankCode}
+                    onChange={(e) => setBankCode(e.target.value)}
+                    className="mt-1 w-full rounded border p-2 text-sm focus:outline-none"
+                  >
+                    <option value="">은행을 선택하세요</option>
+                    {Object.entries(bankCodeSrc).map(([name, code]) => (
+                      <option key={code} value={name}>
+                        {name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="accountNumber" className="block text-sm font-medium">
+                    계좌번호
+                  </label>
+                  <input
+                    id="accountNumber"
+                    type="text"
+                    value={accountNumber}
+                    onChange={(e) => setAccountNumber(e.target.value)}
+                    className="mt-1 w-full rounded border border-gray-300 p-2 text-sm"
+                    placeholder="예: 123-4567-8901"
+                  />
+                </div>
+              </div>
+            )}
+
+            <p className="text-sm">
+              선택된 결제 방식: <strong>{method === 'bank' ? '무통장입금' : '카드결제'}</strong>
+            </p>
+          </div>
+          <div className="flex w-full justify-between rounded-lg border border-borderPrimary p-4">
+            <p className="whitespace-nowrap text-sm">현금영수증 신청</p>
+            <div className="flex items-center gap-4">
+              <label className="flex cursor-pointer items-center gap-1 text-sm">
+                <input
+                  type="radio"
+                  name="cashReceipt"
+                  value="yes"
+                  checked={receiptOption}
+                  onChange={() => setReceiptOption(false)}
+                  className="accent-blue-500"
+                />
+                현금영수증 신청
+              </label>
+
+              <label className="flex cursor-pointer items-center gap-1 text-sm">
+                <input
+                  type="radio"
+                  name="cashReceipt"
+                  value="no"
+                  checked={!receiptOption}
+                  onChange={() => setReceiptOption(true)}
+                  className="accent-blue-500"
+                />
+                신청안함
+              </label>
             </div>
           </div>
         </CreateOrderModal>
