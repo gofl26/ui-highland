@@ -8,7 +8,7 @@ import Checkbox from '@/components/commons/input/DefaultCheckBox'
 import CreateOrderModal from '@/components/modals/CreateOrderModal'
 import { deleteCart } from '@/serverActions/cart'
 import { getDelivery } from '@/serverActions/deliveryAddress'
-import { createOrder } from '@/serverActions/orders'
+import { createOrder, orderList } from '@/serverActions/orders'
 import { bankCodeSrc } from '@/stores/bank'
 import { cartResponse } from '@/types/cart'
 import { deliveryResponse } from '@/types/delivery'
@@ -48,12 +48,56 @@ export default function CartList({ className, cartInfo: rows }: props) {
     setDeliveryList(_deliveryList)
   }
   const handleCreateOrder = async () => {
-    // await createOrder()
+    if (!selectedDelivery) return
+    const orderList = selectedData.reduce<orderList[]>((acc, _id) => {
+      const cartItem = data.find(({ id }) => id === _id)
+      if (!cartItem) return acc
+      const item = {
+        cartId: _id,
+        productId: cartItem.productId,
+        productPrice: cartItem.productPrice,
+        cartQuantity: cartItem.cartQuantity,
+      }
+      acc.push(item)
+      return acc
+    }, [])
+    //유효성 검사
+    if (!bankCode) {
+      showToast('은행을 선택해주세요.', 'info')
+      return
+    }
+    if (!accountNumber) {
+      showToast('계좌번호를 입력해주세요.', 'info')
+      return
+    }
+    const body = {
+      payMethod: method,
+      address: selectedDelivery.deliveryAddress,
+      addressDetail: selectedDelivery.deliveryDetailAddress,
+      bankCode,
+      accountNumber,
+      orderAmount: totalPrice,
+      phoneNumber: selectedDelivery.deliveryPhoneNumber,
+      recipient: selectedDelivery.deliveryRecipient,
+      receipt: receiptOption,
+      orderList,
+    }
+    const result = await createOrder(body)
+    if (!result) showToast('주문에 실패했습니다.', 'error')
+    else {
+      setData((prev) => prev.filter(({ id }) => !selectedData.includes(id)))
+      setSelectedData([])
+      setOpenCreateOrderModal(false)
+      showToast('주문에 성공했습니다.', 'success')
+    }
   }
   const handleClickDeleteCart = async () => {
     const result = await deleteCart(selectedData)
-    if (result) showToast('삭제에 성공했습니다.', 'success')
-    else showToast('삭제에 실패했습니다.', 'error')
+    if (result) {
+      setData((prev) => prev.filter(({ id }) => !selectedData.includes(id)))
+      setSelectedData([])
+      showToast('삭제에 성공했습니다.', 'success')
+    } else showToast('삭제에 실패했습니다.', 'error')
   }
   useEffect(() => {
     const price = selectedData.reduce((acc, _id) => {
@@ -75,7 +119,7 @@ export default function CartList({ className, cartInfo: rows }: props) {
             <tr className="bg-bgHeader">
               <th className="border px-4 py-2">
                 <Checkbox
-                  checked={selectedData.length === data.length}
+                  checked={data.length === 0 ? false : selectedData.length === data.length}
                   onChange={() => {
                     if (selectedData.length === data.length) {
                       setSelectedData([])
@@ -311,7 +355,7 @@ export default function CartList({ className, cartInfo: rows }: props) {
                   >
                     <option value="">은행을 선택하세요</option>
                     {Object.entries(bankCodeSrc).map(([name, code]) => (
-                      <option key={code} value={name}>
+                      <option key={code} value={code}>
                         {name}
                       </option>
                     ))}
@@ -347,7 +391,7 @@ export default function CartList({ className, cartInfo: rows }: props) {
                   name="cashReceipt"
                   value="yes"
                   checked={receiptOption}
-                  onChange={() => setReceiptOption(false)}
+                  onChange={() => setReceiptOption(true)}
                   className="accent-blue-500"
                 />
                 현금영수증 신청
@@ -359,7 +403,7 @@ export default function CartList({ className, cartInfo: rows }: props) {
                   name="cashReceipt"
                   value="no"
                   checked={!receiptOption}
-                  onChange={() => setReceiptOption(true)}
+                  onChange={() => setReceiptOption(false)}
                   className="accent-blue-500"
                 />
                 신청안함
