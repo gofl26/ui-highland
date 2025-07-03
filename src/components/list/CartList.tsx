@@ -1,11 +1,13 @@
 'use client'
 import { ChevronLeft, ChevronRight, CircleEqual, CirclePlus } from 'lucide-react'
+import moment from 'moment'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
 import NumberStepper from '@/components/commons/button/numberStepper'
 import Checkbox from '@/components/commons/input/DefaultCheckBox'
 import CreateOrderModal from '@/components/modals/CreateOrderModal'
+import InfomationModal from '@/components/modals/InfomationModal'
 import { deleteCart } from '@/serverActions/cart'
 import { getDelivery } from '@/serverActions/deliveryAddress'
 import { createOrder, orderList } from '@/serverActions/orders'
@@ -32,6 +34,8 @@ export default function CartList({ className, cartInfo: rows }: props) {
   const [bankCode, setBankCode] = useState('')
   const [accountNumber, setAccountNumber] = useState('')
   const [receiptOption, setReceiptOption] = useState(false)
+  const [openInfomationModal, setOpenInfomationModal] = useState(false)
+  const [paymentAmount, setPaymentAmount] = useState(0)
   const { showToast } = useToast()
 
   const updateQuantity = (id: string, newQuantity: number) => {
@@ -85,10 +89,12 @@ export default function CartList({ className, cartInfo: rows }: props) {
     const result = await createOrder(body)
     if (!result) showToast('주문에 실패했습니다.', 'error')
     else {
+      setPaymentAmount(totalPrice)
       setData((prev) => prev.filter(({ id }) => !selectedData.includes(id)))
       setSelectedData([])
-      setOpenCreateOrderModal(false)
       showToast('주문에 성공했습니다.', 'success')
+      setOpenCreateOrderModal(false)
+      setOpenInfomationModal(true)
     }
   }
   const handleClickDeleteCart = async () => {
@@ -411,6 +417,25 @@ export default function CartList({ className, cartInfo: rows }: props) {
             </div>
           </div>
         </CreateOrderModal>
+        <InfomationModal
+          isOpen={openInfomationModal}
+          onClose={() => {
+            setOpenInfomationModal(false)
+            setPaymentAmount(0)
+          }}
+        >
+          <div className="flex grow flex-col items-center justify-center p-4">
+            <p className="mb-4 text-[1.2rem] font-medium">주문 완료</p>
+            <p>{moment().add(1, 'days').format('YYYY-MM-DD')} 17시 55분까지</p>
+
+            <div className="mt-2 flex items-center gap-2">
+              <span className="text-[#2793FF]">{'농협(356-0005-186963)'}</span>
+              <span>으로</span>
+              <span className="text-[#2793FF]">{formatNumberWithCommas(paymentAmount)}원</span>
+              <span>입금해주시길 바랍니다.</span>
+            </div>
+          </div>
+        </InfomationModal>
       </div>
     </div>
   )

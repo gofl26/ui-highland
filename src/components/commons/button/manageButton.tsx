@@ -17,7 +17,7 @@ export default function ManageButton({ userInfo }: Props) {
   const handleClickManage = () => {
     if (!userInfo) router.push('/login')
     else if (userInfo.role === 'admin') router.push('/manage/orders')
-    else if (userInfo.role === 'customer') router.push('/user/myInfo')
+    else if (userInfo.role === 'customer') router.push('/user/shopping/orderList')
   }
   const handleClickCart = () => {
     if (!userInfo) router.push('/login')
