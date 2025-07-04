@@ -63,14 +63,14 @@ export async function updateCart(body: UpdateCartBody): Promise<boolean | undefi
   }
 }
 
-export async function deleteCart(id: string): Promise<boolean | undefined> {
+export async function deleteCart(ids: string[]): Promise<boolean | undefined> {
   try {
     const result = await authFetch(`${API_URL}/api/carts/delete`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id }),
+      body: JSON.stringify({ id: ids }),
     })
     if (result.ok) return true
     else return false

@@ -21,18 +21,23 @@ export async function getOrder(): Promise<{ rows: orderResponse[]; total: number
   }
 }
 
-interface CreateOrderBody {
+export interface orderList {
+  productId: string
+  productPrice: number
+  cartQuantity: number
+  cartId: string
+}
+export interface CreateOrderBody {
   payMethod: string
   addressDetail: string
   address: string
   bankCode: string
   accountNumber: string
-  deliveryCost: string
-  trackingNumber: string
   orderAmount: number
-  orderStatus: string
   phoneNumber: string
   recipient: string
+  receipt: boolean
+  orderList: orderList[]
 }
 
 export async function createOrder(body: CreateOrderBody): Promise<orderResponse[] | undefined> {

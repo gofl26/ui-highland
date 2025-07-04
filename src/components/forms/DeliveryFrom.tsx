@@ -9,6 +9,7 @@ import type { deliveryResponse, deliveryForm } from '@/types/delivery'
 import { searchAddressResponse } from '@/types/searchAddress'
 import formatPhoneNumber from '@/utils/formatPhoneNumber'
 
+import DefaultPagination from '../commons/button/DefaultPagination'
 import Checkbox from '../commons/input/DefaultCheckBox'
 import SearchAddressModal from '../modals/SearchAddressModal'
 interface props {
@@ -30,7 +31,7 @@ export default function DeliveryForm({ delivery }: props) {
   const [openSearchAddressDialog, setOpenSearchAddressDialog] = useState(false)
   const [searchAddressKey, setSearchAddressKey] = useState('')
   const [jusoList, setJusoList] = useState<searchAddressResponse[]>([])
-
+  const [jusoTotalCount, setJusoTotalCount] = useState(0)
   const { showToast } = useToast()
 
   const handleClickAddDeliveryAddress = () => {
@@ -58,6 +59,7 @@ export default function DeliveryForm({ delivery }: props) {
       jibunAddr,
     }))
     setJusoList(transResult)
+    setJusoTotalCount(result.results.common.totalCount)
   }
   const handleChangeSearchAddressKey = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchAddressKey(event.target.value)
@@ -82,6 +84,13 @@ export default function DeliveryForm({ delivery }: props) {
     setDeliveryForm(newForm)
     setOpenSearchAddressDialog(false)
   }
+  const handleChageJusoPagination = (event: React.ChangeEvent<unknown>, page: number) => {
+    handleClickSearchAddress(page, 10)
+  }
+  useEffect(() => {
+    const defaultDelivery = delivery.find(({ deliveryDefault }) => deliveryDefault)
+    if (defaultDelivery) setSelectedDelivery(defaultDelivery.id)
+  }, [delivery])
   useEffect(() => {
     const response = delivery.find(({ id }) => selectedDelivery === id)
     if (!response) return
@@ -127,10 +136,10 @@ export default function DeliveryForm({ delivery }: props) {
       </div>
       <form className="mt-4 flex w-full max-w-2xl flex-col rounded-lg border border-borderDefault">
         <div className="flex h-20 w-full border-b border-borderDefault">
-          <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
+          <div className="flex w-1/4 items-center justify-center rounded-lg bg-bgDefault">
             배송지 이름
           </div>
-          <div className="flex w-4/5 items-center justify-between gap-4 px-4 py-2">
+          <div className="flex w-3/4 items-center justify-between gap-4 px-4 py-2">
             <div className="flex w-full flex-col">
               <Input
                 value={deliveryForm.deliveryName}
@@ -141,10 +150,10 @@ export default function DeliveryForm({ delivery }: props) {
           </div>
         </div>
         <div className="flex h-20 w-full border-b border-borderDefault">
-          <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
+          <div className="flex w-1/4 items-center justify-center rounded-lg bg-bgDefault">
             받는 사람
           </div>
-          <div className="flex w-4/5 flex-col justify-center gap-2 px-4 py-2">
+          <div className="flex w-3/4 flex-col justify-center gap-2 px-4 py-2">
             <Input
               value={deliveryForm.deliveryRecipient}
               name="deliveryRecipient"
@@ -153,10 +162,10 @@ export default function DeliveryForm({ delivery }: props) {
           </div>
         </div>
         <div className="flex h-20 w-full border-b border-borderDefault">
-          <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
+          <div className="flex w-1/4 items-center justify-center rounded-lg bg-bgDefault">
             연락처
           </div>
-          <div className="flex w-4/5 flex-col justify-center gap-2 px-4 py-2">
+          <div className="flex w-3/4 flex-col justify-center gap-2 px-4 py-2">
             <Input
               value={deliveryForm.deliveryPhoneNumber}
               name="deliveryPhoneNumber"
@@ -165,8 +174,8 @@ export default function DeliveryForm({ delivery }: props) {
           </div>
         </div>
         <div className="flex h-40 w-full border-b border-borderDefault">
-          <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">주소</div>
-          <div className="flex w-4/5 flex-col justify-center">
+          <div className="flex w-1/4 items-center justify-center rounded-lg bg-bgDefault">주소</div>
+          <div className="flex w-3/4 flex-col justify-center">
             <div className="flex items-center gap-2 px-4 py-2">
               <input
                 value={deliveryForm.deliveryAddress}
@@ -195,10 +204,10 @@ export default function DeliveryForm({ delivery }: props) {
           </div>
         </div>
         <div className="flex h-20 w-full border-b border-borderDefault">
-          <div className="flex w-1/5 items-center justify-center rounded-lg bg-bgDefault">
+          <div className="flex w-1/4 items-center justify-center rounded-lg bg-bgDefault">
             기본 배송지로 설정
           </div>
-          <div className="flex w-4/5 flex-col justify-center gap-2 px-4 py-2">
+          <div className="flex w-3/4 flex-col justify-center gap-2 px-4 py-2">
             <Checkbox
               checked={deliveryForm.deliveryDefault}
               onChange={(value) => {
@@ -214,7 +223,6 @@ export default function DeliveryForm({ delivery }: props) {
         <SearchAddressModal
           isOpen={openSearchAddressDialog}
           onClose={() => setOpenSearchAddressDialog(false)}
-          onSave={() => {}}
         >
           <h2 className="mb-4 text-center text-lg font-semibold text-textDefault">
             도로명 주소 안내
@@ -261,6 +269,13 @@ export default function DeliveryForm({ delivery }: props) {
               </div>
             </>
           )}
+          <div className="mt-4 flex items-center justify-center">
+            <DefaultPagination
+              totalCount={jusoTotalCount}
+              totalPerCount={10}
+              onChange={handleChageJusoPagination}
+            />
+          </div>
         </SearchAddressModal>
       )}
       <div className="mt-4 flex w-full max-w-2xl items-center justify-end">

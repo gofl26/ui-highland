@@ -142,9 +142,12 @@ interface jusoDataType {
   size: number
   searchAddressKey: string
 }
+interface searchAddressCount {
+  totalCount: number
+}
 export async function juso(
   jusoData: jusoDataType,
-): Promise<{ results: { juso: searchAddressResponse[] } } | undefined> {
+): Promise<{ results: { juso: searchAddressResponse[]; common: searchAddressCount } } | undefined> {
   try {
     const result = await fetch(
       `${API_URL}/api/juso/get?currentPage=${jusoData.from}&countPerPage=${jusoData.size}&keyword=${jusoData.searchAddressKey}`,
