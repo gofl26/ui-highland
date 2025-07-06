@@ -1,6 +1,7 @@
 export type orderResponse = {
   id: string
   userId: string
+  userName: string
   payMethod: string
   addressDetail: string
   address: string
@@ -29,4 +30,26 @@ export type orderItemResponse = {
   productPrice: string
   updatedAt?: string
   createdAt?: string
+}
+
+export interface productList {
+  productName: string
+  productFile: string
+  productPrice: string
+  orderQuantity: number
+}
+export interface orderList {
+  id: string
+  userName?: string
+  orderStatus: string
+  orderAmount: number
+  deliveryCost: number | null
+  payMethod: string
+  address: string
+  addressDetail: string
+  recipient: string
+  phoneNumber: string
+  productList: productList[]
+  createdAt: string
+  updatedAt: string
 }

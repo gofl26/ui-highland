@@ -4,7 +4,7 @@ import moment from 'moment'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
-import { orderResponse } from '@/types/order'
+import { orderResponse, orderList } from '@/types/order'
 import { formatNumberWithCommas } from '@/utils/formatNumberWithCommas'
 
 interface orderListSrc {
@@ -15,26 +15,7 @@ interface props {
   className: string
   orderListSrc?: orderListSrc
 }
-interface productList {
-  productName: string
-  productFile: string
-  productPrice: string
-  orderQuantity: number
-}
-interface orderList {
-  id: string
-  orderStatus: string
-  orderAmount: number
-  deliveryCost: number | null
-  payMethod: string
-  address: string
-  addressDetail: string
-  recipient: string
-  phoneNumber: string
-  productList: productList[]
-  createdAt: string
-  updatedAt: string
-}
+
 export default function OrderList({ className, orderListSrc }: props) {
   const [orderList, setOrderList] = useState<orderList[]>([])
   const [visibleDetails, setVisibleDetails] = useState<Record<string, boolean>>({})
